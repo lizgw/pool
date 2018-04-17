@@ -19,7 +19,11 @@ namespace Pool
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         //whatever
+<<<<<<< HEAD
         //hello
+=======
+        //test 2
+>>>>>>> 4055e6a081e849a0ede9e08654af2c264c39f722
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
