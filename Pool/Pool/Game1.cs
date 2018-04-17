@@ -19,6 +19,7 @@ namespace Pool
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         //whatever
+        //test 2
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
