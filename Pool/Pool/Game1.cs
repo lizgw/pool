@@ -11,6 +11,13 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Pool
 {
+    public enum GameState
+    {
+        MainMenu,
+        Play,
+        Pause,
+        GameOver
+    };
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -18,9 +25,8 @@ namespace Pool
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        //whatever
 
-        //hello
+        Board board;
 
         public Game1()
         {
@@ -36,7 +42,7 @@ namespace Pool
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            board = new Board(2);
 
             base.Initialize();
         }
@@ -73,7 +79,7 @@ namespace Pool
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
+            board.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -86,7 +92,9 @@ namespace Pool
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            board.Draw(spriteBatch);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
