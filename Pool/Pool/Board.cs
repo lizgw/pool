@@ -11,7 +11,6 @@ namespace Pool
     {
         Player[] players;
         List<Ball> balls;
-        Physics physics;
         GUI gui;
         List<Zone> zones;
 
@@ -21,7 +20,10 @@ namespace Pool
         {
             players = new Player[numPlayers];
             balls = new List<Ball>(2);
-            physics = new Physics();
+            balls.Add(new Ball());
+            balls.Add(new Ball());
+            balls.Add(new Ball());
+            balls.Add(new Ball());
             friction = 0;
 
             gui = new GUI();
@@ -30,7 +32,7 @@ namespace Pool
 
         public void Update(GameTime gameTime)
         {
-
+            Physics.Update(balls);
         }
 
         public void Draw(SpriteBatch spriteBatch)

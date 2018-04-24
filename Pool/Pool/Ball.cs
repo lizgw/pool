@@ -37,5 +37,49 @@ namespace Pool
         {
 
         }
+
+        public Ball Copy()
+        {
+            Ball output = new Ball();
+            output.pos = pos;
+            output.velocity = velocity;
+            output.radius = radius;
+            output.mass = mass;
+            output.friction = friction;
+            output.percentFrameComplete = percentFrameComplete;
+            output.color = color;
+            return output;
+        }
+
+        public void SetPos(Vector2 aPos)
+        {
+            pos = aPos;
+        }
+
+        public void SetVelocity(Vector2 aVelocity)
+        {
+            velocity = aVelocity;
+        }
+
+        //probably only really useful for debugging purposes
+        public void SetColor(Color aColor)
+        {
+            color = aColor;
+        }
+
+        public Vector2 GetPos()
+        {
+            return pos;
+        }
+
+        public Vector2 GetVelocity()
+        {
+            return velocity;
+        }
+
+        public double GetRadius()
+        {
+            return radius;
+        }
     }
 }
