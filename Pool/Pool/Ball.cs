@@ -17,9 +17,19 @@ namespace Pool
         double percentFrameComplete;
 
         protected Color color;
-        Texture2D texture;
-
+        public Texture2D texture;
         public Ball()
+        {
+
+            pos = new Vector2(0, 0);
+            velocity = new Vector2(0, 0);
+            radius = 0;
+            mass = 0;
+            friction = 0;
+            percentFrameComplete = 0;
+            color = Color.White;
+        }
+        public Ball(Texture2D _texture)
         {
             pos = new Vector2(0, 0);
             velocity = new Vector2(0, 0);
@@ -28,6 +38,7 @@ namespace Pool
             friction = 0;
             percentFrameComplete = 0;
             color = Color.White;
+            texture = _texture;
         }
 
         public void Update(GameTime gameTime)
@@ -37,7 +48,7 @@ namespace Pool
 
         public void Draw(SpriteBatch spriteBatch)
         {
-
+            spriteBatch.Draw(texture, pos, color);
         }
     }
 }
