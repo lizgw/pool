@@ -42,7 +42,7 @@ namespace Pool
         /// </summary>
         protected override void Initialize()
         {
-            board = new Board(2);
+            board = new Board(2, Services);
 
             base.Initialize();
         }

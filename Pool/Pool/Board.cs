@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
+
 
 namespace Pool
 {
@@ -15,29 +17,82 @@ namespace Pool
         List<Zone> zones;
 
         double friction;
-
-        public Board(int numPlayers)
+        public ContentManager Content
         {
-            players = new Player[numPlayers];
-            balls = new List<Ball>(2);
-            balls.Add(new Ball());
-            balls.Add(new Ball());
-            balls.Add(new Ball());
-            balls.Add(new Ball());
-            friction = 0;
+            get { return content; }
+        }
+        ContentManager content;//creating content manager
+        public Texture2D ball;//ball sprite holder
 
+        public Board(int numPlayers, IServiceProvider _serviceProvider)
+        {
+            content = new ContentManager(_serviceProvider, "Content");//initializing the content manager
+            ball = this.content.Load<Texture2D>("ball");// loading the ball sprite
+            players = new Player[numPlayers];
+            // create all players
+            for (int i = 0; i < players.Length; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        players[i] = new Player(Color.Red, PlayerIndex.One);
+                        break;
+                    case 1:
+                        players[i] = new Player(Color.Blue, PlayerIndex.Two);
+                        break;
+                    case 2:
+                        players[i] = new Player(Color.Green, PlayerIndex.Three);
+                        break;
+                    case 3:
+                        players[i] = new Player(Color.Yellow, PlayerIndex.Four);
+                        break;
+                    default:
+                        Console.WriteLine("Error - there should be 1-4 players");
+                        break;
+                }
+
+                balls.Add(players[i]);
+            }
+
+            balls = new List<Ball>(2);
+<<<<<<< HEAD
+            balls.Add(new Ball());
+            balls.Add(new Ball());
+            balls.Add(new Ball());
+            balls.Add(new Ball());
+=======
+            balls = new List<Ball>();
+>>>>>>> 8a39815f685d00645f99f42e1bc91bb909ee9142
+            friction = 0;
             gui = new GUI();
             zones = new List<Zone>();
+            for (int i=0; i<2;i++)
+            {
+                balls.Add(new Ball(ball));
+                
+            }//initializes the balls
         }
 
         public void Update(GameTime gameTime)
         {
+<<<<<<< HEAD
             Physics.Update(balls);
+=======
+            foreach (Player p in players)
+            {
+                p.Update(gameTime);
+            }
+>>>>>>> 8a39815f685d00645f99f42e1bc91bb909ee9142
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            foreach (Player p in players)
+                p.Draw(spriteBatch);
 
+            foreach (Ball b in balls)
+                b.Draw(spriteBatch);
         }
+        
     }
 }
