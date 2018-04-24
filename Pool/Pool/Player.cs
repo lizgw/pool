@@ -43,11 +43,13 @@ namespace Pool
             GamePadState gamePad = GamePad.GetState(playerIndex);
 
             // basic movement
-            // TODO: replace with physics-based movement
             Vector2 leftStick = gamePad.ThumbSticks.Left;
 
-            float angle = (float)Math.Atan2(leftStick.Y, leftStick.X);
-            Console.WriteLine(angle);
+            float angle = (float)Math.Atan2(leftStick.Y, leftStick.X); // in radians
+            // no negative angles, just around the unit circle (0 to 360 degrees)
+            if (angle < 0)
+                angle += (float)(Math.PI*2);
+            //Console.WriteLine(MathHelper.ToDegrees(angle));
 
             float percentPower = 0;
 
@@ -73,6 +75,11 @@ namespace Pool
             }
 
             oldGamePad = gamePad;
+        }
+
+        private void move()
+        {
+
         }
     }
 }
