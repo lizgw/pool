@@ -29,22 +29,27 @@ namespace Pool
             content = new ContentManager(_serviceProvider, "Content");//initializing the content manager
             ball = this.content.Load<Texture2D>("ball");// loading the ball sprite
             players = new Player[numPlayers];
+            balls = new List<Ball>(2);
+            balls = new List<Ball>();
+            gui = new GUI();
+            zones = new List<Zone>();
+
             // create all players
             for (int i = 0; i < players.Length; i++)
             {
                 switch (i)
                 {
                     case 0:
-                        players[i] = new Player(Color.Red, PlayerIndex.One);
+                        players[i] = new Player(_serviceProvider, Color.Red, PlayerIndex.One);
                         break;
                     case 1:
-                        players[i] = new Player(Color.Blue, PlayerIndex.Two);
+                        players[i] = new Player(_serviceProvider, Color.Blue, PlayerIndex.Two);
                         break;
                     case 2:
-                        players[i] = new Player(Color.Green, PlayerIndex.Three);
+                        players[i] = new Player(_serviceProvider, Color.Green, PlayerIndex.Three);
                         break;
                     case 3:
-                        players[i] = new Player(Color.Yellow, PlayerIndex.Four);
+                        players[i] = new Player(_serviceProvider, Color.Yellow, PlayerIndex.Four);
                         break;
                     default:
                         Console.WriteLine("Error - there should be 1-4 players");
@@ -53,25 +58,21 @@ namespace Pool
 
                 balls.Add(players[i]);
             }
-            
+
+            balls = new List<Ball>();
             balls.Add(new Ball());
             balls.Add(new Ball());
             balls.Add(new Ball());
             balls.Add(new Ball());
+
             friction = 0;
             gui = new GUI();
             zones = new List<Zone>();
-            for (int i=0; i<2;i++)
-            {
-                balls.Add(new Ball(ball));
-                
-            }//initializes the balls
         }
 
         public void Update(GameTime gameTime)
         {
             Physics.Update(balls);
-
             foreach (Player p in players)
             {
                 p.Update(gameTime);

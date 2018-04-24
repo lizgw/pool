@@ -19,10 +19,8 @@ namespace Pool
                 {
                     Ball ball1 = balls[b1];
                     Ball ball2 = balls[b2];
-                    if (CouldCollide(ball1, ball2))
+                    if (TryCollide(ball1, ball2))
                     {
-
-
                         ball1.SetColor(Color.Red);
                         ball2.SetColor(Color.Red);
                     }
@@ -35,11 +33,11 @@ namespace Pool
             }
         }
 
-        private static bool CouldCollide(Ball ball1, Ball ball2)
+        private static bool TryCollide(Ball ball1, Ball ball2)
         {
             Ball moveBall = ball1.Copy();
             Ball statBall = ball2.Copy();
-            moveBall.SetVelocity(moveBall.GetVelocity() - statBall.GetVelocity());
+            moveBall.SetVelocity(ScalarProduct(moveBall.GetVelocity(), moveBall.GetPercentFrameLeft()) - ScalarProduct(statBall.GetVelocity(), statBall.GetPercentFrameLeft()));
             statBall.SetVelocity(Vector2.Zero);
 
             Vector2 betweenCenters = statBall.GetPos() - moveBall.GetPos();
@@ -58,12 +56,19 @@ namespace Pool
             if (closestDistSquared > Math.Pow(moveBall.GetRadius() + statBall.GetRadius(), 2))
                 return false;
 
+
+
             return true;
         }
 
         private static double DotProduct(Vector2 vect1, Vector2 vect2)
         {
             return vect1.X * vect2.X + vect1.Y * vect2.Y;
+        }
+
+        private static Vector2 ScalarProduct(Vector2 vect, double scal)
+        {
+            return new Vector2((float)(vect.X * scal), (float)(vect.Y * scal));
         }
     }
 }
