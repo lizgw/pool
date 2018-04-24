@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace Pool
 {
@@ -13,15 +14,19 @@ namespace Pool
         int points;
         PlayerIndex playerIndex;
         GamePadState oldGamePad;
+        ContentManager content;
 
         float maxPower;
 
-        public Player(Color aColor, PlayerIndex aPlayerIndex) : base()
+        public Player(IServiceProvider serviceProvider, Color aColor, PlayerIndex aPlayerIndex) : base()
         {
             points = 100;
             color = aColor;
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
+
+            content = new ContentManager(serviceProvider, "Content");
+            texture = this.content.Load<Texture2D>("ball");
 
             maxPower = 100;
         }
@@ -52,6 +57,8 @@ namespace Pool
             //Console.WriteLine(MathHelper.ToDegrees(angle));
 
             float percentPower = 0;
+
+
 
             // start button - open pause menu
             if (gamePad.Buttons.Start.Equals(ButtonState.Pressed) &&
