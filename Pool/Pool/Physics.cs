@@ -7,16 +7,22 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Pool
 {
-    class Physics
+    static class Physics
     {
-        public Physics()
+        public static void Update(List<Ball> balls)
         {
+            foreach(Ball ball in balls)
+            {
+                if (CouldCollide(ball, balls))
+                {
 
+                }
+            }
         }
 
-        public void Update(GameTime gameTime)
+        private static bool CouldCollide(Ball ball, List<Ball> balls)
         {
-
+            return true;
         }
     }
 }
