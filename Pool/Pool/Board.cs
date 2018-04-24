@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
+
 
 namespace Pool
 {
@@ -15,9 +17,17 @@ namespace Pool
         List<Zone> zones;
 
         double friction;
-
-        public Board(int numPlayers)
+        public ContentManager Content
         {
+            get { return content; }
+        }
+        ContentManager content;//creating content manager
+        public Texture2D ball;//ball sprite holder
+
+        public Board(int numPlayers, IServiceProvider _serviceProvider)
+        {
+            content = new ContentManager(_serviceProvider, "Content");//initializing the content manager
+            ball = this.content.Load<Texture2D>("ball");// loading the ball sprite
             players = new Player[numPlayers];
             // create all players
             for (int i = 0; i < players.Length; i++)
@@ -40,13 +50,20 @@ namespace Pool
                         Console.WriteLine("Error - there should be 1-4 players");
                         break;
                 }
+
+                balls.Add(players[i]);
             }
 
             balls = new List<Ball>(2);
+            balls = new List<Ball>();
             friction = 0;
-
             gui = new GUI();
             zones = new List<Zone>();
+            for (int i=0; i<2;i++)
+            {
+                balls.Add(new Ball(ball));
+                
+            }//initializes the balls
         }
 
         public void Update(GameTime gameTime)
@@ -60,9 +77,11 @@ namespace Pool
         public void Draw(SpriteBatch spriteBatch)
         {
             foreach (Player p in players)
-            {
                 p.Draw(spriteBatch);
-            }
+
+            foreach (Ball b in balls)
+                b.Draw(spriteBatch);
         }
+        
     }
 }
