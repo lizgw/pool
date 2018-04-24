@@ -53,16 +53,11 @@ namespace Pool
 
                 balls.Add(players[i]);
             }
-
-            balls = new List<Ball>(2);
-<<<<<<< HEAD
+            
             balls.Add(new Ball());
             balls.Add(new Ball());
             balls.Add(new Ball());
             balls.Add(new Ball());
-=======
-            balls = new List<Ball>();
->>>>>>> 8a39815f685d00645f99f42e1bc91bb909ee9142
             friction = 0;
             gui = new GUI();
             zones = new List<Zone>();
@@ -75,14 +70,12 @@ namespace Pool
 
         public void Update(GameTime gameTime)
         {
-<<<<<<< HEAD
             Physics.Update(balls);
-=======
+
             foreach (Player p in players)
             {
                 p.Update(gameTime);
             }
->>>>>>> 8a39815f685d00645f99f42e1bc91bb909ee9142
         }
 
         public void Draw(SpriteBatch spriteBatch)

@@ -21,6 +21,8 @@ namespace Pool
                     Ball ball2 = balls[b2];
                     if (CouldCollide(ball1, ball2))
                     {
+
+
                         ball1.SetColor(Color.Red);
                         ball2.SetColor(Color.Red);
                     }
