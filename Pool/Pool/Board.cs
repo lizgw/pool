@@ -31,7 +31,6 @@ namespace Pool
             players = new Player[numPlayers];
             balls = new List<Ball>(2);
             balls = new List<Ball>();
-            friction = 0;
             gui = new GUI();
             zones = new List<Zone>();
 
@@ -60,15 +59,20 @@ namespace Pool
                 balls.Add(players[i]);
             }
 
-            for (int i=0; i<2;i++)
-            {
-                balls.Add(new Ball(ball));
-                
-            }//initializes the balls
+            balls = new List<Ball>();
+            balls.Add(new Ball());
+            balls.Add(new Ball());
+            balls.Add(new Ball());
+            balls.Add(new Ball());
+            
+            friction = 0;
+            gui = new GUI();
+            zones = new List<Zone>();
         }
 
         public void Update(GameTime gameTime)
         {
+            Physics.Update(balls);
             foreach (Player p in players)
             {
                 p.Update(gameTime);
