@@ -42,13 +42,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
+
     <Compile Include="zone.png">
       <Name>zone</Name>
-=======
+
     <Compile Include="blank.png">
       <Name>blank</Name>
->>>>>>> 6d7537a21e4d843c5f3899c5b574bd6b7a8c685e
+
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
