@@ -10,7 +10,9 @@ namespace Pool
 {
     static class Physics
     {
-        public static void Update(List<Ball> balls)
+        //It's possible that we'll want the balls to bounce off of more things than
+        //other balls and a single rectangle, but we can look into doing that later.
+        public static void Update(List<Ball> balls, Rectangle tableBounds)
         {
             //iterates through all the two-ball combinations, but doesn't repeat identical combinations in reverse order
             for(int b1 = 0; b1 < balls.Count; b1++)
@@ -30,6 +32,33 @@ namespace Pool
                         ball2.SetColor(Color.Green);
                     }
                 }
+            }
+
+            //collides off of walls and also continues motion of balls with new velocity vectors
+            for (int b = 0; b < balls.Count; b++)
+            {
+                Ball ball = balls[b];
+
+                //wall collision
+                if ((ball.GetPos().X - ball.GetRadius() <= tableBounds.Left && ball.GetVelocity().X < 0) ||
+                    (ball.GetPos().X + ball.GetRadius() >= tableBounds.Right && ball.GetVelocity().X > 0))
+                {
+                    Vector2 newVel = ball.GetVelocity();
+                    newVel.X *= -1;
+                    ball.SetVelocity(newVel);
+                }
+                if ((ball.GetPos().Y - ball.GetRadius() <= tableBounds.Top && ball.GetVelocity().Y < 0) ||
+                    (ball.GetPos().Y + ball.GetRadius() >= tableBounds.Bottom && ball.GetVelocity().Y > 0))
+                {
+                    Vector2 newVel = ball.GetVelocity();
+                    newVel.Y *= -1;
+                    ball.SetVelocity(newVel);
+                }
+
+                //continuing motion of balls
+                ball.SetPercentFrameLeft(1);
+                ball.SetPos(ball.GetPos() + ScalarProduct(ball.GetVelocity(), ball.GetPercentFrameLeft()));
+                ball.SetPercentFrameLeft(1);
             }
         }
 
