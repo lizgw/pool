@@ -42,8 +42,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+
+    <Compile Include="zone.png">
+      <Name>zone</Name>
+
     <Compile Include="blank.png">
       <Name>blank</Name>
+
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
