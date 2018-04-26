@@ -17,10 +17,7 @@ namespace Pool
         List<Zone> zones;
 
         double friction;
-        public ContentManager Content
-        {
-            get { return content; }
-        }
+       
         ContentManager content;//creating content manager
         public Texture2D ball;//ball sprite holder
 
@@ -41,15 +38,19 @@ namespace Pool
                 {
                     case 0:
                         players[i] = new Player(_serviceProvider, Color.Red, PlayerIndex.One);
+                        zones.Add(new Zone(new Rectangle(0,0,400,480), players[i], _serviceProvider));
                         break;
                     case 1:
                         players[i] = new Player(_serviceProvider, Color.Blue, PlayerIndex.Two);
+                        zones.Add(new Zone(new Rectangle(400,0,400,480), players[i], _serviceProvider));
                         break;
                     case 2:
                         players[i] = new Player(_serviceProvider, Color.Green, PlayerIndex.Three);
+                        zones.Add(new Zone(new Rectangle(0, 0, 5, 5), players[i], _serviceProvider));
                         break;
                     case 3:
                         players[i] = new Player(_serviceProvider, Color.Yellow, PlayerIndex.Four);
+                        zones.Add(new Zone(new Rectangle(0, 0, 5, 5), players[i], _serviceProvider));
                         break;
                     default:
                         Console.WriteLine("Error - there should be 1-4 players");
@@ -65,8 +66,8 @@ namespace Pool
             balls.Add(new Ball(ball));
             balls.Add(new Ball(ball));
             friction = 0;
-            gui = new GUI();
-            zones = new List<Zone>();
+           
+           
         }
 
         public void Update(GameTime gameTime)
@@ -76,15 +77,20 @@ namespace Pool
             {
                 p.Update(gameTime);
             }
+            foreach (Zone z in zones)
+                z.Update(gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            foreach (Zone z in zones)
+                z.Draw(spriteBatch);
             foreach (Player p in players)
                 p.Draw(spriteBatch);
 
             foreach (Ball b in balls)
                 b.Draw(spriteBatch);
+           
         }
         
     }

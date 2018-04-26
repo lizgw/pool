@@ -16,7 +16,7 @@ namespace Pool
         double friction;
         double percentFrameLeft;
 
-        protected Color color;
+        public Color color;
         public Texture2D texture;
         public Ball()
         {
