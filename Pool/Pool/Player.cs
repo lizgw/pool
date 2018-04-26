@@ -28,7 +28,7 @@ namespace Pool
             content = new ContentManager(serviceProvider, "Content");
             texture = content.Load<Texture2D>("ball");
 
-            maxPower = 100;
+            maxPower = 5;
         }
 
         public void Update(GameTime gameTime)
@@ -54,10 +54,16 @@ namespace Pool
             // no negative angles, just around the unit circle (0 to 360 degrees)
             if (angle < 0)
                 angle += (float)(Math.PI*2);
-            //Console.WriteLine(MathHelper.ToDegrees(angle));
 
+            // distance between center of stick axis and it's current position
             float dist = (float)Math.Sqrt(Math.Pow(leftStick.X, 2) + Math.Pow(leftStick.Y, 2));
             float percentPower = 0;
+
+            // set velocity as a percentage of the max power
+            SetVelocity(new Vector2(dist * maxPower, dist * maxPower));
+            
+            // move based on angle and velocity
+            Move(angle);
 
             // start button - open pause menu
             if (gamePad.Buttons.Start.Equals(ButtonState.Pressed) &&
@@ -81,11 +87,6 @@ namespace Pool
             }
 
             oldGamePad = gamePad;
-        }
-
-        private void move()
-        {
-
         }
     }
 }
