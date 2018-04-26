@@ -99,5 +99,12 @@ namespace Pool
         {
             return radius;
         }
+
+        // moves ball along anglular path
+        public void Move(float angle)
+        {
+            Vector2 newPos = new Vector2((float)(Math.Cos(angle) * velocity.X), (float)(Math.Sin(angle) * velocity.Y * -1));
+            SetPos(new Vector2(newPos.X + pos.X, newPos.Y + pos.Y));
+        }
     }
 }
