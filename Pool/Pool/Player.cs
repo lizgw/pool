@@ -57,7 +57,6 @@ namespace Pool
             //Console.WriteLine(MathHelper.ToDegrees(angle));
 
             float dist = (float)Math.Sqrt(Math.Pow(leftStick.X, 2) + Math.Pow(leftStick.Y, 2));
-            Console.WriteLine(dist);
             float percentPower = 0;
 
             // start button - open pause menu

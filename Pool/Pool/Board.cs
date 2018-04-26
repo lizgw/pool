@@ -16,6 +16,8 @@ namespace Pool
         GUI gui;
         List<Zone> zones;
 
+        Rectangle tableBounds;
+
         double friction;
         public ContentManager Content
         {
@@ -27,12 +29,13 @@ namespace Pool
         public Board(int numPlayers, IServiceProvider _serviceProvider)
         {
             content = new ContentManager(_serviceProvider, "Content");//initializing the content manager
-            ball = this.content.Load<Texture2D>("ball");// loading the ball sprite
+            ball = content.Load<Texture2D>("ball");// loading the ball sprite
             players = new Player[numPlayers];
-            balls = new List<Ball>(2);
             balls = new List<Ball>();
             gui = new GUI();
             zones = new List<Zone>();
+
+            tableBounds = new Rectangle(20, 20, 520, 320);
 
             // create all players
             for (int i = 0; i < players.Length; i++)
@@ -60,10 +63,14 @@ namespace Pool
             }
 
             balls = new List<Ball>();
-            balls.Add(new Ball(ball));
-            balls.Add(new Ball(ball));
-            balls.Add(new Ball(ball));
-            balls.Add(new Ball(ball));
+            Ball moveBall = new Ball(ball);
+            Ball statBall = new Ball(ball);
+            balls.Add(moveBall);
+            balls.Add(statBall);
+            statBall.SetPos(new Vector2(200, 300));
+            moveBall.SetPos(new Vector2(200, 100));
+            statBall.SetVelocity(new Vector2(0, 6));
+
             friction = 0;
             gui = new GUI();
             zones = new List<Zone>();
@@ -71,7 +78,7 @@ namespace Pool
 
         public void Update(GameTime gameTime)
         {
-            Physics.Update(balls);
+            Physics.Update(balls, tableBounds);
             foreach (Player p in players)
             {
                 p.Update(gameTime);
@@ -80,6 +87,9 @@ namespace Pool
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            //just a temporary means to see the boundaries of the table
+            spriteBatch.Draw(content.Load<Texture2D>("blank"), tableBounds, Color.LightBlue);
+
             foreach (Player p in players)
                 p.Draw(spriteBatch);
 
