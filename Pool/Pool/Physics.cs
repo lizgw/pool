@@ -56,9 +56,12 @@ namespace Pool
                 }
 
                 //continuing motion of balls
-                ball.SetPercentFrameLeft(1);
-                ball.SetPos(ball.GetPos() + ScalarProduct(ball.GetVelocity(), ball.GetPercentFrameLeft()));
-                ball.SetPercentFrameLeft(1);
+
+                if (ball.GetPercentFrameLeft() == 1)
+                {
+                    ball.SetPos(ball.GetPos() + ScalarProduct(ball.GetVelocity(), ball.GetPercentFrameLeft()));
+                    ball.SetPercentFrameLeft(1);
+                }
             }
         }
 
@@ -71,7 +74,9 @@ namespace Pool
 
             Vector2 betweenCenters = statBall.GetPos() - moveBall.GetPos();
 
-            if (moveBall.GetVelocity().Length() < betweenCenters.Length() - moveBall.GetRadius() - statBall.GetRadius())
+            double moveSpeed = moveBall.GetVelocity().Length();
+
+            if (moveSpeed < betweenCenters.Length() - moveBall.GetRadius() - statBall.GetRadius())
                 return false;
 
             if (DotProduct(moveBall.GetVelocity(), betweenCenters) <= 0)
@@ -85,7 +90,23 @@ namespace Pool
             if (closestDistSquared > Math.Pow(moveBall.GetRadius() + statBall.GetRadius(), 2))
                 return false;
 
+            double closestDistToCollisionDistSquared = Math.Pow(moveBall.GetRadius() + statBall.GetRadius(), 2) - closestDistSquared;
 
+            double collisionDist = Math.Sqrt(closestDistSquared) - Math.Sqrt(closestDistToCollisionDistSquared);
+
+            if (moveSpeed < collisionDist)
+                return false;
+
+            double percentFrameLeft = collisionDist / moveSpeed;
+            
+            ball1.SetPos(ball1.GetPos() + ScalarProduct(ball1.GetVelocity(), (ball1.GetPercentFrameLeft() - percentFrameLeft)));
+            ball2.SetPos(ball2.GetPos() + ScalarProduct(ball2.GetVelocity(), (ball2.GetPercentFrameLeft() - percentFrameLeft)));
+
+            //sets the percent frame left of both balls -
+            //probably the same as its namesake here, unless the ball
+            //has already collided with another ball in this frame
+            ball1.SetPercentFrameLeft(ball1.GetPercentFrameLeft() * percentFrameLeft);
+            ball2.SetPercentFrameLeft(ball2.GetPercentFrameLeft() * percentFrameLeft);
 
             return true;
         }

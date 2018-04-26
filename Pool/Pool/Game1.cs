@@ -28,6 +28,9 @@ namespace Pool
 
         Board board;
 
+        bool debugging = true;
+        KeyboardState debugKb, oldDebugKb;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -79,7 +82,16 @@ namespace Pool
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            board.Update(gameTime);
+            if (!debugging)
+                board.Update(gameTime);
+            else
+            {
+                oldDebugKb = debugKb;
+                debugKb = Keyboard.GetState();
+
+                if (debugKb.IsKeyDown(Keys.Space) && oldDebugKb.IsKeyUp(Keys.Space))
+                    board.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }
