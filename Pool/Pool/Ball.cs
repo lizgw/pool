@@ -14,7 +14,7 @@ namespace Pool
         double radius;
         double mass;
         double friction;
-        double percentFrameComplete;
+        double percentFrameLeft;
 
         protected Color color;
         public Texture2D texture;
@@ -26,7 +26,7 @@ namespace Pool
             radius = 0;
             mass = 0;
             friction = 0;
-            percentFrameComplete = 0;
+            percentFrameLeft = 0;
             color = Color.White;
         }
         public Ball(Texture2D _texture)
@@ -36,7 +36,7 @@ namespace Pool
             radius = 0;
             mass = 0;
             friction = 0;
-            percentFrameComplete = 0;
+            percentFrameLeft = 1;
             color = Color.White;
             texture = _texture;
         }
@@ -59,7 +59,7 @@ namespace Pool
             output.radius = radius;
             output.mass = mass;
             output.friction = friction;
-            output.percentFrameComplete = percentFrameComplete;
+            output.percentFrameLeft = percentFrameLeft;
             output.color = color;
             return output;
         }
@@ -91,6 +91,11 @@ namespace Pool
         }
 
         public double GetRadius()
+        {
+            return radius;
+        }
+
+        public double GetPercentFrameLeft()
         {
             return radius;
         }

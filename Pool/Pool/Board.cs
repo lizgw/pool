@@ -64,7 +64,6 @@ namespace Pool
             balls.Add(new Ball(ball));
             balls.Add(new Ball(ball));
             balls.Add(new Ball(ball));
-            
             friction = 0;
             gui = new GUI();
             zones = new List<Zone>();
