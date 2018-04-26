@@ -60,10 +60,10 @@ namespace Pool
             }
 
             balls = new List<Ball>();
-            balls.Add(new Ball());
-            balls.Add(new Ball());
-            balls.Add(new Ball());
-            balls.Add(new Ball());
+            balls.Add(new Ball(ball));
+            balls.Add(new Ball(ball));
+            balls.Add(new Ball(ball));
+            balls.Add(new Ball(ball));
             
             friction = 0;
             gui = new GUI();
