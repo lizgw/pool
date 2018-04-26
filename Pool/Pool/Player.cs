@@ -26,7 +26,7 @@ namespace Pool
             oldGamePad = GamePad.GetState(playerIndex);
 
             content = new ContentManager(serviceProvider, "Content");
-            texture = this.content.Load<Texture2D>("ball");
+            texture = content.Load<Texture2D>("ball");
 
             maxPower = 100;
         }
@@ -56,9 +56,9 @@ namespace Pool
                 angle += (float)(Math.PI*2);
             //Console.WriteLine(MathHelper.ToDegrees(angle));
 
+            float dist = (float)Math.Sqrt(Math.Pow(leftStick.X, 2) + Math.Pow(leftStick.Y, 2));
+            Console.WriteLine(dist);
             float percentPower = 0;
-
-
 
             // start button - open pause menu
             if (gamePad.Buttons.Start.Equals(ButtonState.Pressed) &&
