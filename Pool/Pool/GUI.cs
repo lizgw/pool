@@ -44,6 +44,10 @@ namespace Pool
         int fillWidth;
         int fillHeight;
         int fillTopOffset;
+        // powerup box background
+        int boxWidth;
+        int boxHeight;
+        int boxOffset;
 
         public GUI(IServiceProvider serviceProvider, Board aBoard)
         {
@@ -70,6 +74,10 @@ namespace Pool
             fillWidth = pbWidth - (fillOffset * 2);
             fillHeight = pbHeight - (fillOffset * 2);
             fillTopOffset = pbTopOffset + fillOffset;
+            // powerup box background
+            boxWidth = sbHeight;
+            boxHeight = boxWidth;
+            boxOffset = 5;
 
             // create lists of GUI elements for each player
             scoreBoxes = new List<Rectangle>(numPlayers);
@@ -81,17 +89,27 @@ namespace Pool
             for (int playerNum = 0; playerNum < numPlayers; playerNum++)
             {
                 // score background rectangle
-                scoreBoxes.Add(new Rectangle(sbPadding + (playerNum * (sbWidth + sbMidPadding)), 0, sbWidth, sbHeight));
+                int rectX = sbPadding + (playerNum * (sbWidth + sbMidPadding));
+                scoreBoxes.Add(new Rectangle(rectX, 0, sbWidth, sbHeight));
 
                 // player score text
                 scoreTexts.Add("100"); // TODO - change to get the actual player score from the board
 
                 // background of power bar
-                int xPos = (playerNum % 2) * (Game1.screenWidth - pbWidth); // either left side or right side
+                int xPos = (playerNum % 2) * (Game1.screenWidth - pbWidth); // either left side or right side depending on the playerNum
                 powerBarBackgrounds.Add(new Rectangle(xPos, pbTopOffset, pbWidth, pbHeight));
 
                 // fill of power bar
                 powerBars.Add(new Rectangle(xPos + fillOffset, fillTopOffset, fillWidth, fillHeight));
+
+                // power up box - should be either right/left of the player's score box
+                xPos = rectX;
+                if (playerNum % 2 == 1) // player 1 & 3, goes on the left of the box
+                    xPos -= (boxWidth + boxOffset);
+                else // player 2 & 4, goes on the right of the box
+                    xPos += scoreBoxes[playerNum].Width + boxOffset;
+
+                powerupBoxes.Add(new Rectangle(xPos, 0, boxWidth, boxHeight));
             }
         }
 
@@ -128,7 +146,7 @@ namespace Pool
                 spriteBatch.Draw(barTexture, powerBars[playerNum], playerColors[playerNum]);
 
                 // power up boxes
-                //spriteBatch.Draw(barTexture, powerupBoxes[playerNum], playerColors[playerNum]);
+                spriteBatch.Draw(barTexture, powerupBoxes[playerNum], playerColors[playerNum]);
             }
         }
 
