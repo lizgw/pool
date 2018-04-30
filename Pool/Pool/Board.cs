@@ -68,9 +68,10 @@ namespace Pool
             Ball statBall = new Ball(ball);
             balls.Add(moveBall);
             balls.Add(statBall);
-            moveBall.SetPos(new Vector2(220, 150));
-            statBall.SetPos(new Vector2(200, 100));
-            moveBall.SetVelocity(new Vector2(0, -5f));
+            moveBall.SetPos(new Vector2(200, 210));
+            statBall.SetPos(new Vector2(220, 100));
+            moveBall.SetVelocity(new Vector2(-1f, -4f));
+            statBall.SetVelocity(new Vector2(0, 4f));
 
             friction = 0;
            
