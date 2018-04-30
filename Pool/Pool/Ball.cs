@@ -16,28 +16,32 @@ namespace Pool
         double friction;
         double percentFrameLeft;
 
-        protected Color color;
+        public Color color;
         public Texture2D texture;
+        Rectangle drawRect;
+
         public Ball()
         {
 
             pos = new Vector2(0, 0);
             velocity = new Vector2(0, 0);
-            radius = 0;
+            radius = 20;
             mass = 0;
             friction = 0;
             percentFrameLeft = 0;
             color = Color.White;
+            drawRect = new Rectangle(0, 0, (int)(radius * 2), (int)(radius * 2));
         }
         public Ball(Texture2D _texture)
         {
             pos = new Vector2(0, 0);
             velocity = new Vector2(0, 0);
-            radius = 0;
+            radius = 20;
             mass = 0;
             friction = 0;
             percentFrameLeft = 1;
             color = Color.White;
+            drawRect = new Rectangle(0, 0, (int)(radius * 2), (int)(radius * 2));
             texture = _texture;
         }
 
@@ -48,7 +52,10 @@ namespace Pool
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, pos, color);
+            drawRect.X = (int)(pos.X - radius);
+            drawRect.Y = (int)(pos.Y - radius);
+            Console.WriteLine(drawRect.X + " " + drawRect.Y + " " + drawRect.Width + " " + drawRect.Height);
+            spriteBatch.Draw(texture, drawRect, color);
         }
 
         public Ball Copy()
@@ -61,8 +68,12 @@ namespace Pool
             output.friction = friction;
             output.percentFrameLeft = percentFrameLeft;
             output.color = color;
+            output.texture = texture;
+            output.drawRect = drawRect;
             return output;
         }
+
+        //SETTERS
 
         public void SetPos(Vector2 aPos)
         {
@@ -74,11 +85,18 @@ namespace Pool
             velocity = aVelocity;
         }
 
+        public void SetPercentFrameLeft(double aPercentFrameLeft)
+        {
+            percentFrameLeft = aPercentFrameLeft;
+        }
+
         //probably only really useful for debugging purposes
         public void SetColor(Color aColor)
         {
             color = aColor;
         }
+
+        //GETTERS
 
         public Vector2 GetPos()
         {
@@ -97,7 +115,7 @@ namespace Pool
 
         public double GetPercentFrameLeft()
         {
-            return radius;
+            return percentFrameLeft;
         }
 
         // moves ball along anglular path

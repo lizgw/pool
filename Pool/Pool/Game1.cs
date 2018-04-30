@@ -27,9 +27,11 @@ namespace Pool
         SpriteBatch spriteBatch;
 
         Board board;
-
+        
         public static int screenWidth = 1080;
         public static int screenHeight = 720;
+        bool debugging = true;
+        KeyboardState debugKb, oldDebugKb;
 
         public Game1()
         {
@@ -85,7 +87,16 @@ namespace Pool
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            board.Update(gameTime);
+            if (!debugging)
+                board.Update(gameTime);
+            else
+            {
+                oldDebugKb = debugKb;
+                debugKb = Keyboard.GetState();
+
+                if (debugKb.IsKeyDown(Keys.Space) && oldDebugKb.IsKeyUp(Keys.Space))
+                    board.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }

@@ -57,6 +57,7 @@ namespace Pool
 
             // distance between center of stick axis and it's current position
             float dist = (float)Math.Sqrt(Math.Pow(leftStick.X, 2) + Math.Pow(leftStick.Y, 2));
+            float percentPower = 0;
 
             // set velocity as a percentage of the max power
             SetVelocity(new Vector2(dist * maxPower, dist * maxPower));
