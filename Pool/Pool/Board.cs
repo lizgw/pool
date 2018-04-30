@@ -44,11 +44,11 @@ namespace Pool
                 {
                     case 0:
                         players[i] = new Player(_serviceProvider, GUI.playerColors[0], PlayerIndex.One);
-                        zones.Add(new Zone(new Rectangle(0,0,400,480), players[i], _serviceProvider));
+                        zones.Add(new Zone(new Rectangle(0, 0, Game1.screenWidth/2, Game1.screenHeight), players[i], _serviceProvider));
                         break;
                     case 1:
                         players[i] = new Player(_serviceProvider, GUI.playerColors[1], PlayerIndex.Two);
-                        zones.Add(new Zone(new Rectangle(400,0,400,480), players[i], _serviceProvider));
+                        zones.Add(new Zone(new Rectangle(Game1.screenWidth / 2, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i], _serviceProvider));
                         break;
                     case 2:
                         players[i] = new Player(_serviceProvider, GUI.playerColors[2], PlayerIndex.Three);
@@ -94,20 +94,20 @@ namespace Pool
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            gui.Draw(spriteBatch);
-
             foreach (Zone z in zones)
                 z.Draw(spriteBatch);
 
             //just a temporary means to see the boundaries of the table
-            spriteBatch.Draw(content.Load<Texture2D>("blank"), tableBounds, Color.LightBlue);
+            //spriteBatch.Draw(content.Load<Texture2D>("blank"), tableBounds, Color.LightBlue);
 
             foreach (Player p in players)
                 p.Draw(spriteBatch);
 
             foreach (Ball b in balls)
                 b.Draw(spriteBatch);
-           
+
+            gui.Draw(spriteBatch);
+
         }
         
     }
