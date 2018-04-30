@@ -98,6 +98,8 @@ namespace Pool
                 return false;
 
             double percentFrameLeft = collisionDist / moveSpeed;
+
+            Debug.WriteLine(percentFrameLeft);
             
             ball1.SetPos(ball1.GetPos() + ScalarProduct(ball1.GetVelocity(), (ball1.GetPercentFrameLeft() - percentFrameLeft)));
             ball2.SetPos(ball2.GetPos() + ScalarProduct(ball2.GetVelocity(), (ball2.GetPercentFrameLeft() - percentFrameLeft)));
