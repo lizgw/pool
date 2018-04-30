@@ -28,10 +28,16 @@ namespace Pool
 
         Board board;
 
+        public static int screenWidth = 1080;
+        public static int screenHeight = 720;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.PreferredBackBufferWidth = screenWidth;
+            graphics.PreferredBackBufferHeight = screenHeight;
         }
 
         /// <summary>
