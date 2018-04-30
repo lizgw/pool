@@ -26,8 +26,8 @@ namespace Pool
                     }
                     else
                     {
-                        ball1.SetColor(Color.Green);
-                        ball2.SetColor(Color.Green);
+                        //ball1.SetColor(Color.Green);
+                        //ball2.SetColor(Color.Green);
                     }
                 }
             }

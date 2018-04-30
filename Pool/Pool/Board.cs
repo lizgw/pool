@@ -11,10 +11,12 @@ namespace Pool
 {
     class Board
     {
-        Player[] players;
+        public Player[] players;
         List<Ball> balls;
         GUI gui;
         List<Zone> zones;
+
+        public GameState state;
 
         double friction;
         public ContentManager Content
@@ -28,11 +30,12 @@ namespace Pool
         {
             content = new ContentManager(_serviceProvider, "Content");//initializing the content manager
             ball = this.content.Load<Texture2D>("ball");// loading the ball sprite
+
             players = new Player[numPlayers];
-            balls = new List<Ball>(2);
-            balls = new List<Ball>();
-            gui = new GUI();
+            state = GameState.Play; // set this dynamically later
+            gui = new GUI(_serviceProvider, this);
             zones = new List<Zone>();
+            balls = new List<Ball>();
 
             // create all players
             for (int i = 0; i < players.Length; i++)
@@ -40,16 +43,16 @@ namespace Pool
                 switch (i)
                 {
                     case 0:
-                        players[i] = new Player(_serviceProvider, Color.Red, PlayerIndex.One);
+                        players[i] = new Player(_serviceProvider, GUI.playerColors[0], PlayerIndex.One);
                         break;
                     case 1:
-                        players[i] = new Player(_serviceProvider, Color.Blue, PlayerIndex.Two);
+                        players[i] = new Player(_serviceProvider, GUI.playerColors[1], PlayerIndex.Two);
                         break;
                     case 2:
-                        players[i] = new Player(_serviceProvider, Color.Green, PlayerIndex.Three);
+                        players[i] = new Player(_serviceProvider, GUI.playerColors[2], PlayerIndex.Three);
                         break;
                     case 3:
-                        players[i] = new Player(_serviceProvider, Color.Yellow, PlayerIndex.Four);
+                        players[i] = new Player(_serviceProvider, GUI.playerColors[3], PlayerIndex.Four);
                         break;
                     default:
                         Console.WriteLine("Error - there should be 1-4 players");
@@ -58,15 +61,12 @@ namespace Pool
 
                 balls.Add(players[i]);
             }
-
-            balls = new List<Ball>();
+            
             balls.Add(new Ball(ball));
             balls.Add(new Ball(ball));
             balls.Add(new Ball(ball));
             balls.Add(new Ball(ball));
             friction = 0;
-            gui = new GUI();
-            zones = new List<Zone>();
         }
 
         public void Update(GameTime gameTime)
@@ -80,6 +80,8 @@ namespace Pool
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            gui.Draw(spriteBatch);
+
             foreach (Player p in players)
                 p.Draw(spriteBatch);
 
