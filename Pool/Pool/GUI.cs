@@ -93,7 +93,7 @@ namespace Pool
                 scoreBoxes.Add(new Rectangle(rectX, 0, sbWidth, sbHeight));
 
                 // player score text
-                scoreTexts.Add("100"); // TODO - change to get the actual player score from the board
+                scoreTexts.Add("" + board.players[playerNum].GetPoints());
 
                 // background of power bar
                 int xPos = (playerNum % 2) * (Game1.screenWidth - pbWidth); // either left side or right side depending on the playerNum
@@ -117,6 +117,10 @@ namespace Pool
         {
             // update state
             state = board.state;
+
+            // update score text for each player
+            for (int i = 0; i < board.players.Length; i++)
+                scoreTexts[i] = "" + board.players[i].GetPoints();
         }
 
         public void Draw(SpriteBatch spriteBatch)

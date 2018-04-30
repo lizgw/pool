@@ -31,7 +31,6 @@ namespace Pool
 
             players = new Player[numPlayers];
             state = GameState.Play; // set this dynamically later
-            gui = new GUI(_serviceProvider, this);
             zones = new List<Zone>();
             balls = new List<Ball>();
 
@@ -70,6 +69,8 @@ namespace Pool
             balls.Add(new Ball(ball));
             balls.Add(new Ball(ball));
             friction = 0;
+
+            gui = new GUI(_serviceProvider, this);
 
             // physics debug
             /*Ball moveBall = new Ball(ball);
