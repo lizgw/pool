@@ -66,8 +66,8 @@ namespace Pool
             }
             balls.Add(new Ball(ball, new Vector2(50, 50)));
             balls.Add(new Ball(ball, new Vector2(100, 500)));
-            balls.Add(new Ball(ball, new Vector2(200, 100)));
-            balls.Add(new Ball(ball, new Vector2(100, 700)));
+            balls.Add(new Ball(ball, new Vector2(700, 100)));
+            balls.Add(new Ball(ball, new Vector2(700, 700)));
             friction = 0;
 
             gui = new GUI(_serviceProvider, this);
@@ -128,14 +128,25 @@ namespace Pool
 
             // find the zone that contains the most balls
             int maxIndex = 0;
+            bool tie = false;
             for (int i = 1; i < numBallsInZone.Length; i++)
             {
-                if (numBallsInZone[i] > numBallsInZone[maxIndex])
+                if (numBallsInZone[i] == numBallsInZone[maxIndex])
+                {
+                    tie = true;
+                }
+                else if (numBallsInZone[i] > numBallsInZone[maxIndex])
+                {
                     maxIndex = i;
+                    tie = false;
+                }
             }
 
             // return the index of the zone/player
-            return maxIndex;
+            if (tie)
+                return -1;
+            else
+                return maxIndex;
         }
 
         // returns the index of the zone that b is in
@@ -156,8 +167,12 @@ namespace Pool
             // find the winning player's index
             int index = FindWinningPlayer();
 
-            // for the winning player, count down the timer
-            players[index].CountDown();
+            // -1 is returned if there's a tie
+            if (index >= 0)
+            {
+                // count down the timer for the winning player
+                players[index].CountDown();
+            }
         }
         
     }
