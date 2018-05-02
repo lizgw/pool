@@ -17,15 +17,15 @@ namespace Pool
         ContentManager content;
         Texture2D texture;
         Color color;
-        public Zone(Rectangle aBounds, Player aPlayerIndex, IServiceProvider _serviceProvider)
+
+        public Zone(IServiceProvider _serviceProvider, Rectangle aBounds, Player aPlayerIndex)
         {
             content = new ContentManager(_serviceProvider, "Content");//initializing the content manager
             bounds = aBounds;
             player = aPlayerIndex;
             display_zones = true;
-            texture = this.content.Load<Texture2D>("zone");
-            color = player.color;
-            
+            texture = content.Load<Texture2D>("zone");
+            color = player.GetColor();            
         }
 
         public void Update(GameTime gameTime)

@@ -20,7 +20,7 @@ namespace Pool
 
         float maxPower;
 
-        public Player(IServiceProvider serviceProvider, Color aColor, PlayerIndex aPlayerIndex) : base()
+        public Player(Color aColor, PlayerIndex aPlayerIndex) : base()
         {
             points = 100;
             scoreTimer = 0;
@@ -28,9 +28,6 @@ namespace Pool
             color = aColor;
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
-
-            content = new ContentManager(serviceProvider, "Content");
-            texture = content.Load<Texture2D>("ball");
 
             maxPower = 5;
         }

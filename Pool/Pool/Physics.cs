@@ -110,11 +110,13 @@ namespace Pool
 
             double a1 = DotProduct(ball1.GetVelocity(), n);
             double a2 = DotProduct(ball2.GetVelocity(), n);
-            
+
             double optimizedP = (2.0 * (a1 - a2)) / (ball1.GetMass() + ball2.GetMass());
             
             Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball1.GetMass());
-            Vector2 newV2 = ball2.GetVelocity() - ScalarProduct(n, optimizedP * ball2.GetMass());
+            Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball2.GetMass());
+
+            Console.WriteLine(newV1 + " " + newV2);
 
             ball1.SetVelocity(newV1);
             ball2.SetVelocity(newV2);
