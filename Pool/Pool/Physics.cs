@@ -23,7 +23,17 @@ namespace Pool
                     Ball ball2 = balls[b2];
                     if (TryCollide(ball1, ball2))
                     {
+<<<<<<< HEAD
                         SetNewVelocities(ball1, ball2);
+=======
+                        ball1.SetColor(Color.Red);
+                        ball2.SetColor(Color.Red);
+                    }
+                    else
+                    {
+                        //ball1.SetColor(Color.Green);
+                        //ball2.SetColor(Color.Green);
+>>>>>>> 5022da02b506c17c168c7837c81c1ed1b61ab7fe
                     }
                 }
             }

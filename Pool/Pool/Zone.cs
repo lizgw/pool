@@ -44,7 +44,7 @@ namespace Pool
         public void Draw(SpriteBatch spriteBatch)
         {
             if (display_zones)
-                spriteBatch.Draw(texture,bounds,color);
+                spriteBatch.Draw(texture, bounds, color * 0.65f);
         }
         public void update_bounds(Rectangle rect)
         {

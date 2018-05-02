@@ -88,5 +88,10 @@ namespace Pool
 
             oldGamePad = gamePad;
         }
+
+        public int GetPoints()
+        {
+            return points;
+        }
     }
 }

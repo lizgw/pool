@@ -11,11 +11,12 @@ namespace Pool
 {
     class Board
     {
-        Player[] players;
+        public Player[] players;
         List<Ball> balls;
         GUI gui;
         List<Zone> zones;
 
+        public GameState state;
         Rectangle tableBounds;
 
         double friction;
@@ -26,11 +27,12 @@ namespace Pool
         public Board(int numPlayers, IServiceProvider _serviceProvider)
         {
             content = new ContentManager(_serviceProvider, "Content");//initializing the content manager
-            ball = content.Load<Texture2D>("ball");// loading the ball sprite
+            ball = this.content.Load<Texture2D>("ball");// loading the ball sprite
+
             players = new Player[numPlayers];
-            balls = new List<Ball>();
-            gui = new GUI();
+            state = GameState.Play; // set this dynamically later
             zones = new List<Zone>();
+            balls = new List<Ball>();
 
             tableBounds = new Rectangle(20, 20, 520, 320);
 
@@ -40,19 +42,19 @@ namespace Pool
                 switch (i)
                 {
                     case 0:
-                        players[i] = new Player(_serviceProvider, Color.Red, PlayerIndex.One);
-                        zones.Add(new Zone(new Rectangle(0,0,400,480), players[i], _serviceProvider));
+                        players[i] = new Player(_serviceProvider, GUI.playerColors[0], PlayerIndex.One);
+                        zones.Add(new Zone(new Rectangle(0, 0, Game1.screenWidth/2, Game1.screenHeight), players[i], _serviceProvider));
                         break;
                     case 1:
-                        players[i] = new Player(_serviceProvider, Color.Blue, PlayerIndex.Two);
-                        zones.Add(new Zone(new Rectangle(400,0,400,480), players[i], _serviceProvider));
+                        players[i] = new Player(_serviceProvider, GUI.playerColors[1], PlayerIndex.Two);
+                        zones.Add(new Zone(new Rectangle(Game1.screenWidth / 2, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i], _serviceProvider));
                         break;
                     case 2:
-                        players[i] = new Player(_serviceProvider, Color.Green, PlayerIndex.Three);
+                        players[i] = new Player(_serviceProvider, GUI.playerColors[2], PlayerIndex.Three);
                         zones.Add(new Zone(new Rectangle(0, 0, 5, 5), players[i], _serviceProvider));
                         break;
                     case 3:
-                        players[i] = new Player(_serviceProvider, Color.Yellow, PlayerIndex.Four);
+                        players[i] = new Player(_serviceProvider, GUI.playerColors[3], PlayerIndex.Four);
                         zones.Add(new Zone(new Rectangle(0, 0, 5, 5), players[i], _serviceProvider));
                         break;
                     default:
@@ -62,20 +64,23 @@ namespace Pool
 
                 balls.Add(players[i]);
             }
+            balls.Add(new Ball(ball));
+            balls.Add(new Ball(ball));
+            balls.Add(new Ball(ball));
+            balls.Add(new Ball(ball));
+            friction = 0;
 
-            balls = new List<Ball>();
-            Ball moveBall = new Ball(ball);
+            gui = new GUI(_serviceProvider, this);
+
+            // physics debug
+            /*Ball moveBall = new Ball(ball);
             Ball statBall = new Ball(ball);
             balls.Add(moveBall);
             balls.Add(statBall);
             moveBall.SetPos(new Vector2(200, 210));
             statBall.SetPos(new Vector2(220, 100));
             moveBall.SetVelocity(new Vector2(-1f, -4f));
-            statBall.SetVelocity(new Vector2(0, 4f));
-
-            friction = 0;
-           
-           
+            statBall.SetVelocity(new Vector2(0, 4f));*/
         }
 
         public void Update(GameTime gameTime)
@@ -91,20 +96,20 @@ namespace Pool
 
         public void Draw(SpriteBatch spriteBatch)
         {
-
             foreach (Zone z in zones)
                 z.Draw(spriteBatch);
 
             //just a temporary means to see the boundaries of the table
-            spriteBatch.Draw(content.Load<Texture2D>("blank"), tableBounds, Color.LightBlue);
-
+            //spriteBatch.Draw(content.Load<Texture2D>("blank"), tableBounds, Color.LightBlue);
 
             foreach (Player p in players)
                 p.Draw(spriteBatch);
 
             foreach (Ball b in balls)
                 b.Draw(spriteBatch);
-           
+
+            gui.Draw(spriteBatch);
+
         }
         
     }

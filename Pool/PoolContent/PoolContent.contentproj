@@ -42,6 +42,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SpriteFont1.spritefont">
+      <Name>SpriteFont1</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
     <Compile Include="zone.png">
       <Name>zone</Name>
       <Importer>TextureImporter</Importer>
