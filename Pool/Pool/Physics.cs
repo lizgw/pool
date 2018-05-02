@@ -15,7 +15,7 @@ namespace Pool
         public static void Update(List<Ball> balls, Rectangle tableBounds)
         {
             //iterates through all the two-ball combinations, but doesn't repeat identical combinations in reverse order
-            for(int b1 = 0; b1 < balls.Count; b1++)
+            for (int b1 = 0; b1 < balls.Count; b1++)
             {
                 for (int b2 = balls.Count - 1; b2 > b1; b2--)
                 {
@@ -100,7 +100,7 @@ namespace Pool
             double percentFrameLeft = collisionDist / moveSpeed;
 
             Debug.WriteLine(percentFrameLeft);
-            
+
             ball1.SetPos(ball1.GetPos() + ScalarProduct(ball1.GetVelocity(), (ball1.GetPercentFrameLeft() - percentFrameLeft)));
             ball2.SetPos(ball2.GetPos() + ScalarProduct(ball2.GetVelocity(), (ball2.GetPercentFrameLeft() - percentFrameLeft)));
 

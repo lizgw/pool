@@ -10,7 +10,7 @@ namespace Pool
     class Ball
     {
         Vector2 pos; // center
-        Vector2 velocity;
+       protected Vector2 velocity;
         double radius;
         double mass;
         double friction;
@@ -23,7 +23,7 @@ namespace Pool
         public Ball()
         {
 
-            pos = new Vector2(0, 0);
+            pos = new Vector2(400, 240);
             velocity = new Vector2(0, 0);
             radius = 20;
             mass = 0;
@@ -47,14 +47,14 @@ namespace Pool
 
         public void Update(GameTime gameTime)
         {
-
+            
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             drawRect.X = (int)(pos.X - radius);
             drawRect.Y = (int)(pos.Y - radius);
-            Console.WriteLine(drawRect.X + " " + drawRect.Y + " " + drawRect.Width + " " + drawRect.Height);
+            //Console.WriteLine(drawRect.X + " " + drawRect.Y + " " + drawRect.Width + " " + drawRect.Height);
             spriteBatch.Draw(texture, drawRect, color);
         }
 
@@ -124,5 +124,7 @@ namespace Pool
             Vector2 newPos = new Vector2((float)(Math.Cos(angle) * velocity.X), (float)(Math.Sin(angle) * velocity.Y * -1));
             SetPos(new Vector2(newPos.X + pos.X, newPos.Y + pos.Y));
         }
+        
+
     }
 }
