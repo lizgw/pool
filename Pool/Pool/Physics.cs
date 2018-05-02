@@ -23,13 +23,7 @@ namespace Pool
                     Ball ball2 = balls[b2];
                     if (TryCollide(ball1, ball2))
                     {
-                        ball1.SetColor(Color.Red);
-                        ball2.SetColor(Color.Red);
-                    }
-                    else
-                    {
-                        //ball1.SetColor(Color.Green);
-                        //ball2.SetColor(Color.Green);
+                        SetNewVelocities(ball1, ball2);
                     }
                 }
             }
@@ -39,7 +33,7 @@ namespace Pool
             {
                 Ball ball = balls[b];
 
-                //wall collision
+                //wall collision - not continuous like ball-ball collision, but maybe fix later
                 if ((ball.GetPos().X - ball.GetRadius() <= tableBounds.Left && ball.GetVelocity().X < 0) ||
                     (ball.GetPos().X + ball.GetRadius() >= tableBounds.Right && ball.GetVelocity().X > 0))
                 {
@@ -56,12 +50,9 @@ namespace Pool
                 }
 
                 //continuing motion of balls
-
-                if (ball.GetPercentFrameLeft() == 1)
-                {
-                    ball.SetPos(ball.GetPos() + ScalarProduct(ball.GetVelocity(), ball.GetPercentFrameLeft()));
-                    ball.SetPercentFrameLeft(1);
-                }
+                
+                ball.SetPos(ball.GetPos() + ScalarProduct(ball.GetVelocity(), ball.GetPercentFrameLeft()));
+                ball.SetPercentFrameLeft(1);
             }
         }
 
@@ -92,25 +83,41 @@ namespace Pool
 
             double closestDistToCollisionDistSquared = Math.Pow(moveBall.GetRadius() + statBall.GetRadius(), 2) - closestDistSquared;
 
-            double collisionDist = Math.Sqrt(closestDistSquared) - Math.Sqrt(closestDistToCollisionDistSquared);
+            double distToClosestPoint = Math.Sqrt(betweenCenters.LengthSquared() - closestDistSquared);
+
+            double collisionDist = distToClosestPoint - Math.Sqrt(closestDistToCollisionDistSquared);
 
             if (moveSpeed < collisionDist)
                 return false;
 
-            double percentFrameLeft = collisionDist / moveSpeed;
+            double percentFrameDone = collisionDist / moveSpeed;
 
-            Debug.WriteLine(percentFrameLeft);
+            //I'm actually not totally sure about this, but maybe it won't be a problem?
+            ball1.SetPos(ball1.GetPos() + ScalarProduct(ball1.GetVelocity(), ball1.GetPercentFrameLeft() * percentFrameDone));
+            ball2.SetPos(ball2.GetPos() + ScalarProduct(ball2.GetVelocity(), ball2.GetPercentFrameLeft() * percentFrameDone));
             
-            ball1.SetPos(ball1.GetPos() + ScalarProduct(ball1.GetVelocity(), (ball1.GetPercentFrameLeft() - percentFrameLeft)));
-            ball2.SetPos(ball2.GetPos() + ScalarProduct(ball2.GetVelocity(), (ball2.GetPercentFrameLeft() - percentFrameLeft)));
-
-            //sets the percent frame left of both balls -
-            //probably the same as its namesake here, unless the ball
-            //has already collided with another ball in this frame
-            ball1.SetPercentFrameLeft(ball1.GetPercentFrameLeft() * percentFrameLeft);
-            ball2.SetPercentFrameLeft(ball2.GetPercentFrameLeft() * percentFrameLeft);
+            ball1.SetPercentFrameLeft(ball1.GetPercentFrameLeft() * (1 - percentFrameDone));
+            ball2.SetPercentFrameLeft(ball2.GetPercentFrameLeft() * (1 - percentFrameDone));
 
             return true;
+        }
+
+        //pre-condition: ball1 and ball2 are touching each other
+        private static void SetNewVelocities(Ball ball1, Ball ball2)
+        {
+            Vector2 n = ball1.GetPos() - ball2.GetPos();
+            n.Normalize();
+
+            double a1 = DotProduct(ball1.GetVelocity(), n);
+            double a2 = DotProduct(ball2.GetVelocity(), n);
+            
+            double optimizedP = (2.0 * (a1 - a2)) / (ball1.GetMass() + ball2.GetMass());
+            
+            Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball1.GetMass());
+            Vector2 newV2 = ball2.GetVelocity() - ScalarProduct(n, optimizedP * ball2.GetMass());
+
+            ball1.SetVelocity(newV1);
+            ball2.SetVelocity(newV2);
         }
 
         private static double DotProduct(Vector2 vect1, Vector2 vect2)

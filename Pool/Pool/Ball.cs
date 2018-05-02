@@ -22,40 +22,24 @@ namespace Pool
 
         public Ball()
         {
-
             pos = new Vector2(0, 0);
             velocity = new Vector2(0, 0);
             radius = 20;
-            mass = 0;
-            friction = 0;
-            percentFrameLeft = 0;
-            color = Color.White;
-            drawRect = new Rectangle(0, 0, (int)(radius * 2), (int)(radius * 2));
-        }
-
-        public Ball(Texture2D _texture)
-        {
-            pos = new Vector2(0, 0);
-            velocity = new Vector2(0, 0);
-            radius = 20;
-            mass = 0;
+            mass = 5;
             friction = 0;
             percentFrameLeft = 1;
             color = Color.White;
             drawRect = new Rectangle(0, 0, (int)(radius * 2), (int)(radius * 2));
+        }
+
+        public Ball(Texture2D _texture) : this() //this() calls the default constructor so we don't have to write all those values twice
+        {
             texture = _texture;
         }
 
-        public Ball(Texture2D aTexture, Vector2 aPosition)
+        public Ball(Texture2D aTexture, Vector2 aPosition) : this()
         {
             pos = aPosition;
-            velocity = new Vector2(0, 0);
-            radius = 20;
-            mass = 0;
-            friction = 0;
-            percentFrameLeft = 1;
-            color = Color.White;
-            drawRect = new Rectangle(0, 0, (int)(radius * 2), (int)(radius * 2));
             texture = aTexture;
         }
 
@@ -124,6 +108,11 @@ namespace Pool
         public double GetRadius()
         {
             return radius;
+        }
+
+        public double GetMass()
+        {
+            return mass;
         }
 
         public double GetPercentFrameLeft()
