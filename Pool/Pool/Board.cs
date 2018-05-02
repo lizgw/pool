@@ -65,7 +65,7 @@ namespace Pool
                 balls.Add(players[i]);
             }
             balls.Add(new Ball(ball, new Vector2(50, 50)));
-            balls.Add(new Ball(ball, new Vector2(100, 500)));
+            balls.Add(new Ball(ball, new Vector2(700, 500)));
             balls.Add(new Ball(ball, new Vector2(700, 100)));
             balls.Add(new Ball(ball, new Vector2(700, 700)));
             friction = 0;
@@ -167,11 +167,19 @@ namespace Pool
             // find the winning player's index
             int index = FindWinningPlayer();
 
+            bool wonGame = false;
+
             // -1 is returned if there's a tie
             if (index >= 0)
             {
                 // count down the timer for the winning player
-                players[index].CountDown();
+                wonGame = players[index].CountDown();
+            }
+
+            if (wonGame)
+            {
+                // do some game over thing
+                Console.WriteLine("Game over! Player " + (index + 1) + " won!");
             }
         }
         

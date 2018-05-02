@@ -98,13 +98,19 @@ namespace Pool
             return points;
         }
 
-        public void CountDown()
+        // returns true if the player won
+        public bool CountDown()
         {
             scoreTimer = (scoreTimer + 1) % 60;
-            if (scoreTimer == 59)
+            if (scoreTimer == 59 && points > 0)
             {
                 points--;
             }
+
+            if (points == 0)
+                return true;
+            else
+                return false;
         }
     }
 }
