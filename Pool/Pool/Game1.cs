@@ -30,7 +30,7 @@ namespace Pool
         
         public static int screenWidth = 1080;
         public static int screenHeight = 720;
-        bool debugging = true;
+        bool debugging = false;
         KeyboardState debugKb, oldDebugKb;
 
         public Game1()

@@ -32,6 +32,7 @@ namespace Pool
             color = Color.White;
             drawRect = new Rectangle(0, 0, (int)(radius * 2), (int)(radius * 2));
         }
+
         public Ball(Texture2D _texture)
         {
             pos = new Vector2(0, 0);
@@ -45,6 +46,19 @@ namespace Pool
             texture = _texture;
         }
 
+        public Ball(Texture2D aTexture, Vector2 aPosition)
+        {
+            pos = aPosition;
+            velocity = new Vector2(0, 0);
+            radius = 20;
+            mass = 0;
+            friction = 0;
+            percentFrameLeft = 1;
+            color = Color.White;
+            drawRect = new Rectangle(0, 0, (int)(radius * 2), (int)(radius * 2));
+            texture = aTexture;
+        }
+
         public void Update(GameTime gameTime)
         {
 
@@ -54,7 +68,6 @@ namespace Pool
         {
             drawRect.X = (int)(pos.X - radius);
             drawRect.Y = (int)(pos.Y - radius);
-            Console.WriteLine(drawRect.X + " " + drawRect.Y + " " + drawRect.Width + " " + drawRect.Height);
             spriteBatch.Draw(texture, drawRect, color);
         }
 
@@ -116,6 +129,11 @@ namespace Pool
         public double GetPercentFrameLeft()
         {
             return percentFrameLeft;
+        }
+
+        public Rectangle GetDrawRect()
+        {
+            return drawRect;
         }
 
         // moves ball along anglular path

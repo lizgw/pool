@@ -46,13 +46,20 @@ namespace Pool
             if (display_zones)
                 spriteBatch.Draw(texture, bounds, color * 0.65f);
         }
+
         public void update_bounds(Rectangle rect)
         {
             bounds = rect;
         }
+
         public void displayZones()
         {
             display_zones = true;
+        }
+
+        public Rectangle GetBounds()
+        {
+            return bounds;
         }
 
     }

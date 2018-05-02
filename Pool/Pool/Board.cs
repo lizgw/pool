@@ -64,33 +64,28 @@ namespace Pool
 
                 balls.Add(players[i]);
             }
-            balls.Add(new Ball(ball));
-            balls.Add(new Ball(ball));
-            balls.Add(new Ball(ball));
-            balls.Add(new Ball(ball));
+            balls.Add(new Ball(ball, new Vector2(50, 50)));
+            balls.Add(new Ball(ball, new Vector2(100, 500)));
+            balls.Add(new Ball(ball, new Vector2(200, 100)));
+            balls.Add(new Ball(ball, new Vector2(100, 700)));
             friction = 0;
 
             gui = new GUI(_serviceProvider, this);
-
-            // physics debug
-            /*Ball moveBall = new Ball(ball);
-            Ball statBall = new Ball(ball);
-            balls.Add(moveBall);
-            balls.Add(statBall);
-            moveBall.SetPos(new Vector2(220, 150));
-            statBall.SetPos(new Vector2(200, 100));
-            moveBall.SetVelocity(new Vector2(0, -5f));*/
         }
 
         public void Update(GameTime gameTime)
         {
             Physics.Update(balls, tableBounds);
+
             foreach (Player p in players)
-            {
                 p.Update(gameTime);
-            }
+
             foreach (Zone z in zones)
                 z.Update(gameTime);
+
+            gui.Update(gameTime);
+
+            UpdateScores();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -108,7 +103,61 @@ namespace Pool
                 b.Draw(spriteBatch);
 
             gui.Draw(spriteBatch);
+        }
 
+        // returns the index of the player with the most number of balls in their zone
+        private int FindWinningPlayer()
+        {
+            // 1 index for each player/zone
+            int[] numBallsInZone = new int[players.Length];
+
+            for (int i = 0; i < balls.Count(); i++)
+            {
+                Ball b = balls[i];
+
+                // if it's not a player (just a normal ball)
+                if (b.GetType() != typeof(Player))
+                {
+                    // find which zone it's in
+                    int indexOfZone = FindZone(b);
+
+                    // increment the count for that zone
+                    numBallsInZone[indexOfZone]++;
+                }
+            }
+
+            // find the zone that contains the most balls
+            int maxIndex = 0;
+            for (int i = 1; i < numBallsInZone.Length; i++)
+            {
+                if (numBallsInZone[i] > numBallsInZone[maxIndex])
+                    maxIndex = i;
+            }
+
+            // return the index of the zone/player
+            return maxIndex;
+        }
+
+        // returns the index of the zone that b is in
+        private int FindZone(Ball b)
+        {
+            for (int i = 0; i < zones.Count(); i++)
+            {
+                if (zones[i].GetBounds().Intersects(b.GetDrawRect()))
+                    return i;
+            }
+
+            // this shouldn't happen - each ball should be in a zone
+            return -1;
+        }
+
+        private void UpdateScores()
+        {
+            // find the winning player's index
+            int index = FindWinningPlayer();
+
+            // for the winning player, count down the timer
+            players[index].CountDown();
         }
         
     }
