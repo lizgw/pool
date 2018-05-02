@@ -17,12 +17,9 @@ namespace Pool
     class Powerup : Ball
     {
         PowerupType type;
-        Texture2D ptexture ;
         
         public Powerup(PowerupType aType)
         {
-            texture = ptexture;
-            
             type = aType;
         }
 

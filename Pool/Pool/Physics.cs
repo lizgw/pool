@@ -23,17 +23,7 @@ namespace Pool
                     Ball ball2 = balls[b2];
                     if (TryCollide(ball1, ball2))
                     {
-<<<<<<< HEAD
                         SetNewVelocities(ball1, ball2);
-=======
-                        ball1.SetColor(Color.Red);
-                        ball2.SetColor(Color.Red);
-                    }
-                    else
-                    {
-                        //ball1.SetColor(Color.Green);
-                        //ball2.SetColor(Color.Green);
->>>>>>> 5022da02b506c17c168c7837c81c1ed1b61ab7fe
                     }
                 }
             }
@@ -120,11 +110,13 @@ namespace Pool
 
             double a1 = DotProduct(ball1.GetVelocity(), n);
             double a2 = DotProduct(ball2.GetVelocity(), n);
-            
+
             double optimizedP = (2.0 * (a1 - a2)) / (ball1.GetMass() + ball2.GetMass());
             
             Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball1.GetMass());
-            Vector2 newV2 = ball2.GetVelocity() - ScalarProduct(n, optimizedP * ball2.GetMass());
+            Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball2.GetMass());
+
+            Console.WriteLine(newV1 + " " + newV2);
 
             ball1.SetVelocity(newV1);
             ball2.SetVelocity(newV2);
