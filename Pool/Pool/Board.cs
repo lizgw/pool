@@ -78,17 +78,24 @@ namespace Pool
             statBall.SetVelocity(new Vector2(-1f, 4f));
             balls.Add(moveBall);
             balls.Add(statBall);
+            friction = 0;
+
+            gui = new GUI(serviceProvider, this);
         }
 
         public void Update(GameTime gameTime)
         {
             Physics.Update(balls, tableBounds);
+
             foreach (Player p in players)
-            {
                 p.Update(gameTime);
-            }
+
             foreach (Zone z in zones)
                 z.Update(gameTime);
+
+            gui.Update(gameTime);
+
+            UpdateScores();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -106,7 +113,76 @@ namespace Pool
                 b.Draw(spriteBatch);
 
             gui.Draw(spriteBatch);
+        }
 
+        // returns the index of the player with the most number of balls in their zone
+        private int FindWinningPlayer()
+        {
+            // 1 index for each player/zone
+            int[] numBallsInZone = new int[players.Length];
+
+            for (int i = 0; i < balls.Count(); i++)
+            {
+                Ball b = balls[i];
+
+                // if it's not a player (just a normal ball)
+                if (b.GetType() != typeof(Player))
+                {
+                    // find which zone it's in
+                    int indexOfZone = FindZone(b);
+
+                    // increment the count for that zone
+                    numBallsInZone[indexOfZone]++;
+                }
+            }
+
+            // find the zone that contains the most balls
+            int maxIndex = 0;
+            bool tie = false;
+            for (int i = 1; i < numBallsInZone.Length; i++)
+            {
+                if (numBallsInZone[i] == numBallsInZone[maxIndex])
+                {
+                    tie = true;
+                }
+                else if (numBallsInZone[i] > numBallsInZone[maxIndex])
+                {
+                    maxIndex = i;
+                    tie = false;
+                }
+            }
+
+            // return the index of the zone/player
+            if (tie)
+                return -1;
+            else
+                return maxIndex;
+        }
+
+        // returns the index of the zone that b is in
+        private int FindZone(Ball b)
+        {
+            for (int i = 0; i < zones.Count(); i++)
+            {
+                if (zones[i].GetBounds().Intersects(b.GetDrawRect()))
+                    return i;
+            }
+
+            // this shouldn't happen - each ball should be in a zone
+            return -1;
+        }
+
+        private void UpdateScores()
+        {
+            // find the winning player's index
+            int index = FindWinningPlayer();
+
+            // -1 is returned if there's a tie
+            if (index >= 0)
+            {
+                // count down the timer for the winning player
+                players[index].CountDown();
+            }
         }
         
     }

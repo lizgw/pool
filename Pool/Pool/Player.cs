@@ -12,6 +12,8 @@ namespace Pool
     class Player : Ball
     {
         int points;
+        int scoreTimer;
+
         PlayerIndex playerIndex;
         GamePadState oldGamePad;
         ContentManager content;
@@ -21,6 +23,8 @@ namespace Pool
         public Player(Color aColor, PlayerIndex aPlayerIndex) : base()
         {
             points = 100;
+            scoreTimer = 0;
+
             color = aColor;
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
@@ -89,6 +93,15 @@ namespace Pool
         public int GetPoints()
         {
             return points;
+        }
+
+        public void CountDown()
+        {
+            scoreTimer = (scoreTimer + 1) % 60;
+            if (scoreTimer == 59)
+            {
+                points--;
+            }
         }
     }
 }

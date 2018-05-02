@@ -43,6 +43,11 @@ namespace Pool
             color = aColor;
         }
 
+        public Ball(Vector2 aPosition) : this()
+        {
+            pos = aPosition;
+        }
+
         public void Update(GameTime gameTime)
         {
 
@@ -129,7 +134,11 @@ namespace Pool
             return percentFrameLeft;
         }
 
-        // moves ball along angular path
+        public Rectangle GetDrawRect()
+        {
+            return drawRect;
+        }
+
         public void Move(float angle)
         {
             Vector2 newPos = new Vector2((float)(Math.Cos(angle) * velocity.X), (float)(Math.Sin(angle) * velocity.Y * -1));
