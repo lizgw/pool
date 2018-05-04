@@ -107,7 +107,7 @@ namespace Pool
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.ForestGreen);
+            GraphicsDevice.Clear(new Color(119, 98, 87));
 
             spriteBatch.Begin();
             board.Draw(spriteBatch);

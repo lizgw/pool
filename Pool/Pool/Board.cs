@@ -34,8 +34,6 @@ namespace Pool
             zones = new List<Zone>();
             balls = new List<Ball>();
 
-            tableBounds = new Rectangle(20, 20, 520, 320);
-
             // create all players
             for (int i = 0; i < players.Length; i++)
             {
@@ -66,6 +64,8 @@ namespace Pool
             }
 
             gui = new GUI(serviceProvider, this);
+            tableBounds = new Rectangle(gui.pbWidth, gui.sbHeight,
+                Game1.screenWidth - (gui.pbWidth*2), Game1.screenHeight - (gui.sbHeight*2));
 
             // physics debug
             Ball moveBall = new Ball();
@@ -104,8 +104,8 @@ namespace Pool
             foreach (Zone z in zones)
                 z.Draw(spriteBatch);
 
-            //just a temporary means to see the boundaries of the table
-            //spriteBatch.Draw(content.Load<Texture2D>("blank"), tableBounds, Color.LightBlue);
+            // draw table bounds
+            spriteBatch.Draw(content.Load<Texture2D>("blank"), tableBounds, Color.Green * 0.75f);
 
             foreach (Player p in players)
                 p.Draw(spriteBatch);
