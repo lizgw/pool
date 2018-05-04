@@ -59,7 +59,6 @@ namespace Pool
                     ball.SetVelocity(Vector2.Zero);
 
                 //continuing motion of balls
-
                 ball.SetPos(ball.GetPos() + ScalarProduct(ball.GetVelocity(), ball.GetPercentFrameLeft()));
                 ball.SetPercentFrameLeft(1);
             }
