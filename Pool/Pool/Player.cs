@@ -12,25 +12,31 @@ namespace Pool
     class Player : Ball
     {
         int points;
+        int scoreTimer;
+
         PlayerIndex playerIndex;
         GamePadState oldGamePad;
         ContentManager content;
         float angle;
         float old_dist;
         float maxPower;
+
         float dist;
         bool fire;
         GamePadState gamePad;
         int timer; // only for testing
-        public Player(IServiceProvider serviceProvider, Color aColor, PlayerIndex aPlayerIndex) : base()
+       // public Player(IServiceProvider serviceProvider, Color aColor, PlayerIndex aPlayerIndex) : base()
+
+
+        public Player(Color aColor, PlayerIndex aPlayerIndex) : base()
+
         {
             points = 100;
+            scoreTimer = 0;
+
             color = aColor;
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
-
-            content = new ContentManager(serviceProvider, "Content");
-            texture = content.Load<Texture2D>("ball");
 
             maxPower = 5;
         }
@@ -43,8 +49,8 @@ namespace Pool
             //Move((float)Math.PI);
             if (fire)
                 Move(angle);
-            timer = (timer + 1) % 120;
-            if (timer==119)
+            timer = (timer + 1) % 30;
+            if (timer==29)
                  SetVelocity(new Vector2(0, 0));
             if (velocity.X == 0 && velocity.Y == 0)
             {
@@ -72,7 +78,7 @@ namespace Pool
             Vector2 leftStick = gamePad.ThumbSticks.Left;
             Console.WriteLine(""+leftStick.X+" "+leftStick.Y);
             if (leftStick.Y != 0 || leftStick.X != 0)
-                angle = (float)Math.Atan2(leftStick.Y, leftStick.X); // in radians
+                angle = (float)Math.Atan2(leftStick.Y, leftStick.X) + (float)Math.PI; // in radians
                                                                      // no negative angles, just around the unit circle (0 to 360 degrees)
 
 
@@ -121,6 +127,7 @@ namespace Pool
 
             oldGamePad = gamePad;
         }
+
         //private void HandleInput()
         //{
         //    GamePadState gamePad = GamePad.GetState(playerIndex);
@@ -166,5 +173,27 @@ namespace Pool
 
         //    oldGamePad = gamePad;
         //}
+
+
+        public int GetPoints()
+        {
+            return points;
+        }
+
+        // returns true if the player won
+        public bool CountDown()
+        {
+            scoreTimer = (scoreTimer + 1) % 60;
+            if (scoreTimer == 59 && points > 0)
+            {
+                points--;
+            }
+
+            if (points == 0)
+                return true;
+            else
+                return false;
+        }
+
     }
 }

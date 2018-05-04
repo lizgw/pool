@@ -27,14 +27,19 @@ namespace Pool
         SpriteBatch spriteBatch;
 
         Board board;
-
-        bool debugging = true;
+        
+        public static int screenWidth = 1080;
+        public static int screenHeight = 720;
+        bool debugging = false;
         KeyboardState debugKb, oldDebugKb;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.PreferredBackBufferWidth = screenWidth;
+            graphics.PreferredBackBufferHeight = screenHeight;
         }
 
         /// <summary>
@@ -102,7 +107,7 @@ namespace Pool
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.ForestGreen);
 
             spriteBatch.Begin();
             board.Draw(spriteBatch);

@@ -9,6 +9,8 @@ namespace Pool
 {
     class Ball
     {
+        public static Texture2D defaultTexture;
+
         Vector2 pos; // center
        protected Vector2 velocity;
         double radius;
@@ -16,33 +18,36 @@ namespace Pool
         double friction;
         double percentFrameLeft;
 
-        public Color color;
-        public Texture2D texture;
+        protected Color color;
         Rectangle drawRect;
 
         public Ball()
         {
 
-            pos = new Vector2(400, 240);
-            velocity = new Vector2(0, 0);
-            radius = 20;
-            mass = 0;
-            friction = 0;
-            percentFrameLeft = 0;
-            color = Color.White;
-            drawRect = new Rectangle(0, 0, (int)(radius * 2), (int)(radius * 2));
-        }
-        public Ball(Texture2D _texture)
-        {
             pos = new Vector2(0, 0);
+
             velocity = new Vector2(0, 0);
             radius = 20;
-            mass = 0;
-            friction = 0;
+            mass = 5;
+            friction = 1.5;
             percentFrameLeft = 1;
             color = Color.White;
             drawRect = new Rectangle(0, 0, (int)(radius * 2), (int)(radius * 2));
-            texture = _texture;
+        }
+
+        public Ball(Vector2 aPos, Vector2 aVelocity, double aRadius, double aMass, double aFriction, Color aColor) : this() //this() calls the default constructor so we don't have to write all those values twice
+        {
+            pos = aPos;
+            velocity = aVelocity;
+            radius = aRadius;
+            mass = aMass;
+            friction = aFriction;
+            color = aColor;
+        }
+
+        public Ball(Vector2 aPosition) : this()
+        {
+            pos = aPosition;
         }
 
         public void Update(GameTime gameTime)
@@ -54,8 +59,11 @@ namespace Pool
         {
             drawRect.X = (int)(pos.X - radius);
             drawRect.Y = (int)(pos.Y - radius);
+
             //Console.WriteLine(drawRect.X + " " + drawRect.Y + " " + drawRect.Width + " " + drawRect.Height);
-            spriteBatch.Draw(texture, drawRect, color);
+           
+            spriteBatch.Draw(defaultTexture, drawRect, color);
+
         }
 
         public Ball Copy()
@@ -68,7 +76,6 @@ namespace Pool
             output.friction = friction;
             output.percentFrameLeft = percentFrameLeft;
             output.color = color;
-            output.texture = texture;
             output.drawRect = drawRect;
             return output;
         }
@@ -96,6 +103,11 @@ namespace Pool
             color = aColor;
         }
 
+        public void SetMass(double aMass)
+        {
+            mass = aMass;
+        }
+
         //GETTERS
 
         public Vector2 GetPos()
@@ -113,12 +125,26 @@ namespace Pool
             return radius;
         }
 
+        public Color GetColor()
+        {
+            return color;
+        }
+
+        public double GetMass()
+        {
+            return mass;
+        }
+
         public double GetPercentFrameLeft()
         {
             return percentFrameLeft;
         }
 
-        // moves ball along anglular path
+        public Rectangle GetDrawRect()
+        {
+            return drawRect;
+        }
+
         public void Move(float angle)
         {
             Vector2 newPos = new Vector2((float)(Math.Cos(angle) * velocity.X), (float)(Math.Sin(angle) * velocity.Y * -1));
