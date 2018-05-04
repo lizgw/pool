@@ -9,13 +9,13 @@ using System.Diagnostics;
 namespace Pool
 {
     static class Physics
-    {
+   {
         //It's possible that we'll want the balls to bounce off of more things than
         //other balls and a single rectangle, but we can look into doing that later.
         public static void Update(List<Ball> balls, Rectangle tableBounds)
         {
             //iterates through all the two-ball combinations, but doesn't repeat identical combinations in reverse order
-            for(int b1 = 0; b1 < balls.Count; b1++)
+            for (int b1 = 0; b1 < balls.Count; b1++)
             {
                 for (int b2 = balls.Count - 1; b2 > b1; b2--)
                 {
@@ -50,7 +50,7 @@ namespace Pool
                 }
 
                 //continuing motion of balls
-                
+
                 ball.SetPos(ball.GetPos() + ScalarProduct(ball.GetVelocity(), ball.GetPercentFrameLeft()));
                 ball.SetPercentFrameLeft(1);
             }
@@ -95,7 +95,7 @@ namespace Pool
             //I'm actually not totally sure about this, but maybe it won't be a problem?
             ball1.SetPos(ball1.GetPos() + ScalarProduct(ball1.GetVelocity(), ball1.GetPercentFrameLeft() * percentFrameDone));
             ball2.SetPos(ball2.GetPos() + ScalarProduct(ball2.GetVelocity(), ball2.GetPercentFrameLeft() * percentFrameDone));
-            
+
             ball1.SetPercentFrameLeft(ball1.GetPercentFrameLeft() * (1 - percentFrameDone));
             ball2.SetPercentFrameLeft(ball2.GetPercentFrameLeft() * (1 - percentFrameDone));
 
@@ -112,7 +112,7 @@ namespace Pool
             double a2 = DotProduct(ball2.GetVelocity(), n);
 
             double optimizedP = (2.0 * (a1 - a2)) / (ball1.GetMass() + ball2.GetMass());
-            
+
             Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball1.GetMass());
             Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball2.GetMass());
 

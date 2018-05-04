@@ -97,7 +97,7 @@ namespace Pool
                 if (debugKb.IsKeyDown(Keys.Space) && oldDebugKb.IsKeyUp(Keys.Space))
                     board.Update(gameTime);
             }
-
+            board.Update(gameTime);
             base.Update(gameTime);
         }
 

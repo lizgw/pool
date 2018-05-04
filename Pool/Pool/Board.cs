@@ -98,7 +98,9 @@ namespace Pool
 
         public void Update(GameTime gameTime)
         {
+
             Physics.Update(balls, tableBounds);
+
 
             foreach (Player p in players)
                 p.Update(gameTime);
