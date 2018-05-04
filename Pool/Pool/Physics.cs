@@ -12,7 +12,7 @@ namespace Pool
    {
         //It's possible that we'll want the balls to bounce off of more things than
         //other balls and a single rectangle, but we can look into doing that later.
-        public static void Update(List<Ball> balls, Rectangle tableBounds)
+        public static void Update(List<Ball> balls, Rectangle tableBounds, double boardFriction)
         {
             //iterates through all the two-ball combinations, but doesn't repeat identical combinations in reverse order
             for (int b1 = 0; b1 < balls.Count; b1++)
@@ -28,7 +28,7 @@ namespace Pool
                 }
             }
 
-            //collides off of walls and also continues motion of balls with new velocity vectors
+            //colliding off of walls, friction, and continuing motion of balls with new velocity vectors
             for (int b = 0; b < balls.Count; b++)
             {
                 Ball ball = balls[b];
@@ -48,6 +48,15 @@ namespace Pool
                     newVel.Y *= -1;
                     ball.SetVelocity(newVel);
                 }
+
+                //friction
+                
+                double frictionAccel = ball.GetFriction() * boardFriction;
+                double ballSpeed = ball.GetVelocity().Length();
+                if (frictionAccel < ballSpeed)
+                    ball.SetVelocity(ScalarProduct(ball.GetVelocity(), (ballSpeed - frictionAccel) / ballSpeed));
+                else
+                    ball.SetVelocity(Vector2.Zero);
 
                 //continuing motion of balls
 
@@ -116,11 +125,6 @@ namespace Pool
             Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball1.GetMass());
             Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball2.GetMass());
 
-<<<<<<< HEAD
-=======
-            Console.WriteLine(newV1 + " " + newV2);
-
->>>>>>> 8365ff0ca2415fda905ad99fd6c892396f5768cd
             ball1.SetVelocity(newV1);
             ball2.SetVelocity(newV2);
         }

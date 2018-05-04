@@ -68,10 +68,10 @@ namespace Pool
                 Game1.screenWidth - (gui.pbWidth*2), Game1.screenHeight - (gui.sbHeight*2));
 
             // physics debug
-            AddBallTriangle(new Vector2(200, 200), 5, new Ball());
-            balls.Add(new Ball(new Vector2(200, 400), new Vector2(0, -20f), 20, 10, 1, Color.White));
+            AddBallTriangle(new Vector2(400, 200), 3, new Ball());
+            balls.Add(new Ball(new Vector2(400, 400), new Vector2(0, -10f), 20, 10, 1, Color.White));
 
-            friction = 0;
+            friction = 0.07;
 
             gui = new GUI(serviceProvider, this);
         }
@@ -98,9 +98,7 @@ namespace Pool
 
         public void Update(GameTime gameTime)
         {
-
-            Physics.Update(balls, tableBounds);
-
+            Physics.Update(balls, tableBounds, friction);
 
             foreach (Player p in players)
                 p.Update(gameTime);
@@ -147,7 +145,8 @@ namespace Pool
                     int indexOfZone = FindZone(b);
 
                     // increment the count for that zone
-                    numBallsInZone[indexOfZone]++;
+                    if (indexOfZone != -1)
+                        numBallsInZone[indexOfZone]++;
                 }
             }
 

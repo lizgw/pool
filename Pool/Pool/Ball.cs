@@ -12,7 +12,7 @@ namespace Pool
         public static Texture2D defaultTexture;
 
         Vector2 pos; // center
-       protected Vector2 velocity;
+        protected Vector2 velocity;
         double radius;
         double mass;
         double friction;
@@ -23,13 +23,11 @@ namespace Pool
 
         public Ball()
         {
-
             pos = new Vector2(0, 0);
-
             velocity = new Vector2(0, 0);
             radius = 20;
             mass = 5;
-            friction = 1.5;
+            friction = 0.07;
             percentFrameLeft = 1;
             color = Color.White;
             drawRect = new Rectangle(0, 0, (int)(radius * 2), (int)(radius * 2));
@@ -52,15 +50,13 @@ namespace Pool
 
         public void Update(GameTime gameTime)
         {
-            
+
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             drawRect.X = (int)(pos.X - radius);
             drawRect.Y = (int)(pos.Y - radius);
-
-            //Console.WriteLine(drawRect.X + " " + drawRect.Y + " " + drawRect.Width + " " + drawRect.Height);
            
             spriteBatch.Draw(defaultTexture, drawRect, color);
 
@@ -133,6 +129,11 @@ namespace Pool
         public double GetMass()
         {
             return mass;
+        }
+
+        public double GetFriction()
+        {
+            return friction;
         }
 
         public double GetPercentFrameLeft()
