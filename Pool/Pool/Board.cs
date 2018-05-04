@@ -70,17 +70,32 @@ namespace Pool
             gui = new GUI(serviceProvider, this);
 
             // physics debug
-            Ball moveBall = new Ball();
-            Ball statBall = new Ball();
-            moveBall.SetPos(new Vector2(200, 210));
-            statBall.SetPos(new Vector2(200, 100));
-            moveBall.SetVelocity(new Vector2(0, -4f));
-            statBall.SetVelocity(new Vector2(-1f, 4f));
-            balls.Add(moveBall);
-            balls.Add(statBall);
+
+            AddBallTriangle(new Vector2(200, 200), 6, new Ball());
+            balls.Add(new Ball(new Vector2(200, 400), new Vector2(0, -20f), 20, 10, 1, Color.White));
             friction = 0;
 
             gui = new GUI(serviceProvider, this);
+        }
+
+        private void AddBallTriangle(Vector2 centerPos, int sideLength, Ball ballPrefab)
+        {
+            double radius = ballPrefab.GetRadius();
+
+            double firstBallX = centerPos.X;
+            double firstballY = centerPos.Y - radius * 3;
+
+            for (int row = 0; row < sideLength; row++)
+            {
+                for (int col = 0; col <= row; col++)
+                {
+                    Vector2 ballPos = new Vector2((float)(firstBallX + col * radius * 2), (float)(firstballY + radius * 1.732 * row)); // 1.732 is sqrt(3)
+                    Ball ballToAdd = ballPrefab.Copy();
+                    ballToAdd.SetPos(ballPos);
+                    balls.Add(ballToAdd);
+                }
+                firstBallX -= radius;
+            }
         }
 
         public void Update(GameTime gameTime)
