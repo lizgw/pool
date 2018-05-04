@@ -33,10 +33,10 @@ namespace Pool
         int sbPadding;
         int sbMidPadding;
         int sbWidth;
-        int sbHeight;
+        public int sbHeight;
         int stPadding;
         // power bars
-        int pbWidth;
+        public int pbWidth;
         int pbHeight;
         int pbTopOffset;
         // power bar fill

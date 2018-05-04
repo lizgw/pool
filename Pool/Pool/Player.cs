@@ -29,6 +29,24 @@ namespace Pool
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
 
+            int offset = 200;
+            // set player position based on the index
+            switch(playerIndex)
+            {
+                case PlayerIndex.One:
+                    SetPos(new Vector2(offset, offset));
+                    break;
+                case PlayerIndex.Two:
+                    SetPos(new Vector2(Game1.screenWidth - offset, offset));
+                    break;
+                case PlayerIndex.Three:
+                    SetPos(new Vector2(offset, Game1.screenHeight - offset));
+                    break;
+                case PlayerIndex.Four:
+                    SetPos(new Vector2(Game1.screenWidth - offset, Game1.screenHeight - offset));
+                    break;
+            }
+
             maxPower = 5;
         }
 
@@ -95,13 +113,19 @@ namespace Pool
             return points;
         }
 
-        public void CountDown()
+        // returns true if the player won
+        public bool CountDown()
         {
             scoreTimer = (scoreTimer + 1) % 60;
-            if (scoreTimer == 59)
+            if (scoreTimer == 59 && points > 0)
             {
                 points--;
             }
+
+            if (points == 0)
+                return true;
+            else
+                return false;
         }
     }
 }

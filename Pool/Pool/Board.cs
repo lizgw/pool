@@ -34,8 +34,6 @@ namespace Pool
             zones = new List<Zone>();
             balls = new List<Ball>();
 
-            tableBounds = new Rectangle(20, 20, 520, 320);
-
             // create all players
             for (int i = 0; i < players.Length; i++)
             {
@@ -65,14 +63,14 @@ namespace Pool
                 balls.Add(players[i]);
             }
 
-            friction = 0;
-
             gui = new GUI(serviceProvider, this);
+            tableBounds = new Rectangle(gui.pbWidth, gui.sbHeight,
+                Game1.screenWidth - (gui.pbWidth*2), Game1.screenHeight - (gui.sbHeight*2));
 
             // physics debug
-
-            AddBallTriangle(new Vector2(200, 200), 6, new Ball());
+            AddBallTriangle(new Vector2(200, 200), 5, new Ball());
             balls.Add(new Ball(new Vector2(200, 400), new Vector2(0, -20f), 20, 10, 1, Color.White));
+
             friction = 0;
 
             gui = new GUI(serviceProvider, this);
@@ -118,8 +116,8 @@ namespace Pool
             foreach (Zone z in zones)
                 z.Draw(spriteBatch);
 
-            //just a temporary means to see the boundaries of the table
-            //spriteBatch.Draw(content.Load<Texture2D>("blank"), tableBounds, Color.LightBlue);
+            // draw table bounds
+            spriteBatch.Draw(content.Load<Texture2D>("blank"), tableBounds, Color.Green * 0.75f);
 
             foreach (Player p in players)
                 p.Draw(spriteBatch);
@@ -192,11 +190,19 @@ namespace Pool
             // find the winning player's index
             int index = FindWinningPlayer();
 
+            bool wonGame = false;
+
             // -1 is returned if there's a tie
             if (index >= 0)
             {
                 // count down the timer for the winning player
-                players[index].CountDown();
+                wonGame = players[index].CountDown();
+            }
+
+            if (wonGame)
+            {
+                // do some game over thing
+                Console.WriteLine("Game over! Player " + (index + 1) + " won!");
             }
         }
         
