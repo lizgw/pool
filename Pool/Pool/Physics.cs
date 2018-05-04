@@ -50,7 +50,6 @@ namespace Pool
                 }
 
                 //continuing motion of balls
-
                 ball.SetPos(ball.GetPos() + ScalarProduct(ball.GetVelocity(), ball.GetPercentFrameLeft()));
                 ball.SetPercentFrameLeft(1);
             }
@@ -115,8 +114,6 @@ namespace Pool
 
             Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball1.GetMass());
             Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball2.GetMass());
-
-            Console.WriteLine(newV1 + " " + newV2);
 
             ball1.SetVelocity(newV1);
             ball2.SetVelocity(newV2);
