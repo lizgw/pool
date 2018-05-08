@@ -14,7 +14,7 @@ namespace Pool
         int points;
         int scoreTimer;
 
-        PlayerIndex playerIndex;
+        public PlayerIndex playerIndex;
         GamePadState oldGamePad;
         ContentManager content;
         float angle;
@@ -71,6 +71,12 @@ namespace Pool
         public void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
+        }
+
+        public bool RestartButtonIsDown(PlayerIndex playerIndex)
+        {
+            GamePadState gamePad = GamePad.GetState(playerIndex);
+            return gamePad.IsButtonDown(Buttons.X);
         }
 
         private void HandleInput()

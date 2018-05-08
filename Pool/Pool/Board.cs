@@ -22,12 +22,15 @@ namespace Pool
         double friction;
        
         ContentManager content;//creating content manager
+        IServiceProvider serviceProvider;
+
         public Texture2D ball;//ball sprite holder
 
         public int winningPlayer; // for the GUI to access
 
-        public Board(int numPlayers, IServiceProvider serviceProvider)
+        public Board(int numPlayers, IServiceProvider aServiceProvider)
         {
+            serviceProvider = aServiceProvider;
             content = new ContentManager(serviceProvider, "Content");//initializing the content manager
             Ball.defaultTexture = content.Load<Texture2D>("ball");// loading the ball sprite
 
@@ -37,41 +40,15 @@ namespace Pool
             balls = new List<Ball>();
 
             // create all players
-            for (int i = 0; i < players.Length; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        players[i] = new Player(GUI.playerColors[0], PlayerIndex.One);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, Game1.screenWidth/2, Game1.screenHeight), players[i]));
-                        break;
-                    case 1:
-                        players[i] = new Player(GUI.playerColors[1], PlayerIndex.Two);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(Game1.screenWidth / 2, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
-                        break;
-                    case 2:
-                        players[i] = new Player(GUI.playerColors[2], PlayerIndex.Three);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, 5, 5), players[i]));
-                        break;
-                    case 3:
-                        players[i] = new Player(GUI.playerColors[3], PlayerIndex.Four);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, 5, 5), players[i]));
-                        break;
-                    default:
-                        Console.WriteLine("Error - there should be 1-4 players");
-                        break;
-                }
+            CreatePlayers();
 
-                balls.Add(players[i]);
-            }
-
+            // GUI & table bounds
             gui = new GUI(serviceProvider, this);
             tableBounds = new Rectangle(gui.pbWidth, gui.sbHeight,
                 Game1.screenWidth - (gui.pbWidth*2), Game1.screenHeight - (gui.sbHeight*2));
 
-            // physics debug
-            AddBallTriangle(new Vector2(400, 200), 3, new Ball());
-            balls.Add(new Ball(new Vector2(400, 400), new Vector2(0, -10f), 20, 10, 1, Color.White));
+            // Add the non-player balls
+            CreateBalls();
 
             friction = 0.07;
 
@@ -100,6 +77,43 @@ namespace Pool
             }
         }
 
+        private void CreateBalls()
+        {
+            AddBallTriangle(new Vector2(400, 200), 3, new Ball());
+            balls.Add(new Ball(new Vector2(400, 400), new Vector2(0, -10f), 20, 10, 1, Color.White));
+        }
+
+        private void CreatePlayers()
+        {
+            for (int i = 0; i < players.Length; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        players[i] = new Player(GUI.playerColors[0], PlayerIndex.One);
+                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
+                        break;
+                    case 1:
+                        players[i] = new Player(GUI.playerColors[1], PlayerIndex.Two);
+                        zones.Add(new Zone(serviceProvider, new Rectangle(Game1.screenWidth / 2, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
+                        break;
+                    case 2:
+                        players[i] = new Player(GUI.playerColors[2], PlayerIndex.Three);
+                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, 5, 5), players[i]));
+                        break;
+                    case 3:
+                        players[i] = new Player(GUI.playerColors[3], PlayerIndex.Four);
+                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, 5, 5), players[i]));
+                        break;
+                    default:
+                        Console.WriteLine("Error - there should be 1-4 players");
+                        break;
+                }
+
+                balls.Add(players[i]);
+            }
+        }
+
         public void Update(GameTime gameTime)
         {
             if (state == GameState.Play)
@@ -113,6 +127,17 @@ namespace Pool
                     z.Update(gameTime);
 
                 UpdateScores();
+            }
+            else if (state == GameState.GameOver)
+            {
+                // listen for the "restart game" button
+                for (int i = 0; i < players.Length; i++)
+                {
+                    if (players[i].RestartButtonIsDown(players[i].playerIndex))
+                    {
+                        restartGame();
+                    }
+                }
             }
 
             gui.Update(gameTime);
@@ -214,6 +239,21 @@ namespace Pool
                 winningPlayer = index;
                 state = GameState.GameOver;
             }
+        }
+
+        private void restartGame()
+        {
+            // reset board vars
+            state = GameState.Play;
+            winningPlayer = -1;
+
+            // empty the lists
+            balls.Clear();
+            players = new Player[players.Length];
+
+            // create the players & balls again
+            CreatePlayers();
+            CreateBalls();
         }
         
     }

@@ -175,6 +175,10 @@ namespace Pool
             // winning text
             string winText = "Game Over!\nCongratulations player " + (board.winningPlayer + 1) + "!";
             spriteBatch.DrawString(font, winText, new Vector2(100, 100), Color.White);
+
+            // Play again text
+            string againText = "Press X on any controller to play again";
+            spriteBatch.DrawString(font, againText, new Vector2(100, 300), Color.White);
         }
     }
 }
