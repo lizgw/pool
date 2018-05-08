@@ -24,6 +24,8 @@ namespace Pool
         ContentManager content;//creating content manager
         public Texture2D ball;//ball sprite holder
 
+        public int winningPlayer; // for the GUI to access
+
         public Board(int numPlayers, IServiceProvider serviceProvider)
         {
             content = new ContentManager(serviceProvider, "Content");//initializing the content manager
@@ -73,6 +75,8 @@ namespace Pool
 
             friction = 0.07;
 
+            winningPlayer = -1;
+
             gui = new GUI(serviceProvider, this);
         }
 
@@ -98,17 +102,20 @@ namespace Pool
 
         public void Update(GameTime gameTime)
         {
-            Physics.Update(balls, tableBounds, friction);
+            if (state == GameState.Play)
+            {
+                Physics.Update(balls, tableBounds, friction);
 
-            foreach (Player p in players)
-                p.Update(gameTime);
+                foreach (Player p in players)
+                    p.Update(gameTime);
 
-            foreach (Zone z in zones)
-                z.Update(gameTime);
+                foreach (Zone z in zones)
+                    z.Update(gameTime);
+
+                UpdateScores();
+            }
 
             gui.Update(gameTime);
-
-            UpdateScores();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -204,6 +211,8 @@ namespace Pool
             {
                 // do some game over thing
                 Console.WriteLine("Game over! Player " + (index + 1) + " won!");
+                winningPlayer = index;
+                state = GameState.GameOver;
             }
         }
         
