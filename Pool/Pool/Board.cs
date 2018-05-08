@@ -50,6 +50,9 @@ namespace Pool
             // Add the non-player balls
             CreateBalls();
 
+            // Add powerups (DEBUG METHOD)
+            AddPowerups();
+
             friction = 0.07;
 
             winningPlayer = -1;
@@ -74,6 +77,16 @@ namespace Pool
                     balls.Add(ballToAdd);
                 }
                 firstBallX -= radius;
+            }
+        }
+
+        private void AddPowerups()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Powerup p = new Powerup((PowerupType)i);
+                p.SetPos(new Vector2(300 + (i * 100), 100));
+                balls.Add(p);
             }
         }
 
