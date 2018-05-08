@@ -28,6 +28,12 @@ namespace Pool
 
         public int winningPlayer; // for the GUI to access
 
+        Random rnd;
+        int powerupTimer;
+        int powerupInterval; // when it resets, this value changes randomly
+        int powerupTimerMax;
+        int powerupTimerMin;
+
         public Board(int numPlayers, IServiceProvider aServiceProvider)
         {
             serviceProvider = aServiceProvider;
@@ -50,12 +56,15 @@ namespace Pool
             // Add the non-player balls
             CreateBalls();
 
-            // Add powerups (DEBUG METHOD)
-            AddPowerups();
-
             friction = 0.07;
 
             winningPlayer = -1;
+
+            rnd = new Random();
+            powerupTimer = 0;
+            powerupTimerMax = 360; // 6 seconds
+            powerupTimerMin = 180; // 3 seconds
+            powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
 
             gui = new GUI(serviceProvider, this);
         }
@@ -80,14 +89,25 @@ namespace Pool
             }
         }
 
-        private void AddPowerups()
+        private void CreatePowerup()
         {
-            for (int i = 0; i < 3; i++)
-            {
-                Powerup p = new Powerup((PowerupType)i);
-                p.SetPos(new Vector2(300 + (i * 100), 100));
-                balls.Add(p);
-            }
+            // pick a random type
+            int randType = rnd.Next(0, 3);
+
+            // create the powerup
+            Powerup p = new Powerup((PowerupType)randType);
+
+            // move it to a random location in the table bounds
+            int pSize = p.GetDrawRect().Width;
+            int xPos = rnd.Next(tableBounds.X + pSize, tableBounds.Right - pSize);
+            int yPos = rnd.Next(tableBounds.Y + pSize, tableBounds.Bottom - pSize);
+            p.SetPos(new Vector2(xPos, yPos));
+
+            // add it to the list
+            balls.Add(p);
+
+            // reset the timer
+            powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
         }
 
         private void CreateBalls()
@@ -140,6 +160,11 @@ namespace Pool
                     z.Update(gameTime);
 
                 UpdateScores();
+
+                // create powerups
+                powerupTimer = (powerupTimer + 1) % (powerupInterval + 1);
+                if (powerupTimer == powerupInterval)
+                    CreatePowerup();
             }
             else if (state == GameState.GameOver)
             {
