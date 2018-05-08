@@ -19,7 +19,9 @@ namespace Pool
         ContentManager content;
         float angle;
         float old_dist;
+
         float maxPower;
+        float maxVelocity;
 
         float dist;
         bool fire;
@@ -56,15 +58,14 @@ namespace Pool
                     break;
             }
 
-            maxPower = .1f;
+            maxPower = .3f;
+            maxVelocity = 4;
         }
 
         public void Update(GameTime gameTime)
         {
-           
             HandleInput();
-            base.Update(gameTime);
-          
+            base.Update(gameTime);          
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -79,7 +80,9 @@ namespace Pool
             // basic movement
             Vector2 leftStick = gamePad.ThumbSticks.Left;
 
-            SetVelocity(GetVelocity() + new Vector2(leftStick.X * maxPower, -leftStick.Y * maxPower));
+            Vector2 tentativeVelocity = GetVelocity() + new Vector2(leftStick.X * maxPower, -leftStick.Y * maxPower);
+            if (tentativeVelocity.LengthSquared() < maxVelocity * maxVelocity)
+                SetVelocity(tentativeVelocity);
 
             // start button - open pause menu
             if (gamePad.Buttons.Start.Equals(ButtonState.Pressed) &&
