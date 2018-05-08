@@ -69,7 +69,7 @@ namespace Pool
 
             // physics debug
             AddBallTriangle(new Vector2(400, 200), 3, new Ball());
-            balls.Add(new Ball(new Vector2(400, 400), new Vector2(0, -10f), 20, 10, 1, Color.White));
+            balls.Add(new Ball(new Vector2(400, 400), new Vector2(0, -10f), 20, 10, .07, Color.White));
 
             friction = 0.07;
 

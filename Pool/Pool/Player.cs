@@ -11,31 +11,28 @@ namespace Pool
 {
     class Player : Ball
     {
-        int points;
-        int scoreTimer;
+        int points = 100;
+        int scoreTimer = 0;
 
         PlayerIndex playerIndex;
         GamePadState oldGamePad;
-        ContentManager content;
-        float angle;
-        float old_dist;
+        
+        bool reversedMove = false;
+        float maxPowerPerFrame = 0.05f;
+        float maxPower = 4f;
 
-        float maxPower;
-        float maxVelocity;
+        Vector2 normalizedThumbstick;
+        float zeroBuffer = .2f; //only will record normalizedThumbstick if pulled back far enough
+        float power = 0;
+        bool isZero = true;
+        bool wasZero = true;
 
-        float dist;
-        bool fire;
-        GamePadState gamePad;
-        int timer; // only for testing
-       // public Player(IServiceProvider serviceProvider, Color aColor, PlayerIndex aPlayerIndex) : base()
-
+        float aimingFriction = 3f;
+        float nonaimingFriction = .07f;
 
         public Player(Color aColor, PlayerIndex aPlayerIndex) : base()
 
         {
-            points = 100;
-            scoreTimer = 0;
-
             color = aColor;
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
@@ -57,9 +54,6 @@ namespace Pool
                     SetPos(new Vector2(Game1.screenWidth - offset, Game1.screenHeight - offset));
                     break;
             }
-
-            maxPower = .3f;
-            maxVelocity = 4;
         }
 
         public void Update(GameTime gameTime)
@@ -78,11 +72,7 @@ namespace Pool
             GamePadState gamePad = GamePad.GetState(playerIndex);
 
             // basic movement
-            Vector2 leftStick = gamePad.ThumbSticks.Left;
-
-            Vector2 tentativeVelocity = GetVelocity() + new Vector2(leftStick.X * maxPower, -leftStick.Y * maxPower);
-            if (tentativeVelocity.LengthSquared() < maxVelocity * maxVelocity)
-                SetVelocity(tentativeVelocity);
+            HandleMovement(gamePad.ThumbSticks.Left);
 
             // start button - open pause menu
             if (gamePad.Buttons.Start.Equals(ButtonState.Pressed) &&
@@ -108,6 +98,45 @@ namespace Pool
             oldGamePad = gamePad;
         }
 
+        private void HandleMovement(Vector2 aThumbstick)
+        {
+            Vector2 thumbstick;
+
+            if (reversedMove)
+                thumbstick = new Vector2(-aThumbstick.X, aThumbstick.Y);
+            else
+                thumbstick = new Vector2(aThumbstick.X, -aThumbstick.Y);
+
+            wasZero = isZero;
+            isZero = thumbstick.LengthSquared() <= 0;
+
+            if (isZero)
+            {
+                SetFriction(nonaimingFriction);
+
+                if (!wasZero)
+                {
+                    SetVelocity(GetVelocity() + Physics.ScalarProduct(normalizedThumbstick, power));
+                    power = 0;
+                }
+            }
+            else 
+            {
+                SetFriction(aimingFriction);
+
+                power += maxPowerPerFrame * thumbstick.Length();
+                if (power > maxPower)
+                    power = maxPower;
+
+                //this needs to be implemented into the GUI later on, as well as stamina
+                Console.WriteLine(power);
+
+                if (thumbstick.LengthSquared() > zeroBuffer * zeroBuffer) {
+                    thumbstick.Normalize();
+                    normalizedThumbstick = thumbstick;
+                }
+            }
+        }
 
         public int GetPoints()
         {
@@ -117,8 +146,9 @@ namespace Pool
         // returns true if the player won
         public bool CountDown()
         {
-            scoreTimer = (scoreTimer + 1) % 60;
-            if (scoreTimer == 59 && points > 0)
+            //I don't understand why, but it seems to be incrementing the scoreTimer twice as fast as it should be - so 120 instead of 60
+            scoreTimer = (scoreTimer + 1) % 120;
+            if (scoreTimer == 119 && points > 0)
             {
                 points--;
             }

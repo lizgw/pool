@@ -104,6 +104,11 @@ namespace Pool
             mass = aMass;
         }
 
+        protected void SetFriction(double aFriction)
+        {
+            friction = aFriction;
+        }
+
         //GETTERS
 
         public Vector2 GetPos()
