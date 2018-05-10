@@ -22,10 +22,21 @@ namespace Pool
         double friction;
        
         ContentManager content;//creating content manager
+        IServiceProvider serviceProvider;
+
         public Texture2D ball;//ball sprite holder
 
-        public Board(int numPlayers, IServiceProvider serviceProvider)
+        public int winningPlayer; // for the GUI to access
+
+        Random rnd;
+        int powerupTimer;
+        int powerupInterval; // when it resets, this value changes randomly
+        int powerupTimerMax;
+        int powerupTimerMin;
+
+        public Board(int numPlayers, IServiceProvider aServiceProvider)
         {
+            serviceProvider = aServiceProvider;
             content = new ContentManager(serviceProvider, "Content");//initializing the content manager
             Ball.defaultTexture = content.Load<Texture2D>("ball");// loading the ball sprite
             Player.SetCueStickTexture(content.Load<Texture2D>("cueStick"));
@@ -36,42 +47,28 @@ namespace Pool
             balls = new List<Ball>();
 
             // create all players
-            for (int i = 0; i < players.Length; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        players[i] = new Player(GUI.playerColors[0], PlayerIndex.One);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, Game1.screenWidth/2, Game1.screenHeight), players[i]));
-                        break;
-                    case 1:
-                        players[i] = new Player(GUI.playerColors[1], PlayerIndex.Two);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(Game1.screenWidth / 2, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
-                        break;
-                    case 2:
-                        players[i] = new Player(GUI.playerColors[2], PlayerIndex.Three);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, 5, 5), players[i]));
-                        break;
-                    case 3:
-                        players[i] = new Player(GUI.playerColors[3], PlayerIndex.Four);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, 5, 5), players[i]));
-                        break;
-                    default:
-                        Console.WriteLine("Error - there should be 1-4 players");
-                        break;
-                }
+            CreatePlayers();
 
-                balls.Add(players[i]);
-            }
-
+            // GUI & table bounds
             gui = new GUI(serviceProvider, this);
             tableBounds = new Rectangle(gui.pbWidth, gui.sbHeight,
                 Game1.screenWidth - (gui.pbWidth*2), Game1.screenHeight - (gui.sbHeight*2));
-
+            
             // physics debug
             AddBallTriangle(new Vector2(tableBounds.Center.X, tableBounds.Center.Y), 1, new Ball());
 
+            // Add the non-player balls
+            CreateBalls();
+
             friction = 0.10;
+
+            winningPlayer = -1;
+
+            rnd = new Random();
+            powerupTimer = 0;
+            powerupTimerMax = 360; // 6 seconds
+            powerupTimerMin = 180; // 3 seconds
+            powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
 
             gui = new GUI(serviceProvider, this);
         }
@@ -96,19 +93,96 @@ namespace Pool
             }
         }
 
+        private void CreatePowerup()
+        {
+            // pick a random type
+            int randType = rnd.Next(0, 3);
+
+            // create the powerup
+            Powerup p = new Powerup((PowerupType)randType);
+
+            // move it to a random location in the table bounds
+            int pSize = p.GetDrawRect().Width;
+            int xPos = rnd.Next(tableBounds.X + pSize, tableBounds.Right - pSize);
+            int yPos = rnd.Next(tableBounds.Y + pSize, tableBounds.Bottom - pSize);
+            p.SetPos(new Vector2(xPos, yPos));
+
+            // add it to the list
+            balls.Add(p);
+
+            // reset the timer
+            powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
+        }
+
+        private void CreateBalls()
+        {
+            AddBallTriangle(new Vector2(400, 200), 3, new Ball());
+            balls.Add(new Ball(new Vector2(400, 400), new Vector2(0, -10f), 20, 10, 1, Color.White));
+        }
+
+        private void CreatePlayers()
+        {
+            for (int i = 0; i < players.Length; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        players[i] = new Player(GUI.playerColors[0], PlayerIndex.One, this);
+                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
+                        break;
+                    case 1:
+                        players[i] = new Player(GUI.playerColors[1], PlayerIndex.Two, this);
+                        zones.Add(new Zone(serviceProvider, new Rectangle(Game1.screenWidth / 2, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
+                        break;
+                    case 2:
+                        players[i] = new Player(GUI.playerColors[2], PlayerIndex.Three, this);
+                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, 5, 5), players[i]));
+                        break;
+                    case 3:
+                        players[i] = new Player(GUI.playerColors[3], PlayerIndex.Four, this);
+                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, 5, 5), players[i]));
+                        break;
+                    default:
+                        Console.WriteLine("Error - there should be 1-4 players");
+                        break;
+                }
+
+                balls.Add(players[i]);
+            }
+        }
+
         public void Update(GameTime gameTime)
         {
-            Physics.Update(balls, tableBounds, friction);
+            if (state == GameState.Play)
+            {
+                Physics.Update(balls, tableBounds, friction);
 
-            foreach (Player p in players)
-                p.Update(gameTime);
+                foreach (Player p in players)
+                    p.Update(gameTime);
 
-            foreach (Zone z in zones)
-                z.Update(gameTime);
+                foreach (Zone z in zones)
+                    z.Update(gameTime);
+
+                UpdateScores();
+
+                // create powerups
+                powerupTimer = (powerupTimer + 1) % (powerupInterval + 1);
+                if (powerupTimer == powerupInterval)
+                    CreatePowerup();
+            }
+            else if (state == GameState.GameOver)
+            {
+                // listen for the "restart game" button
+                for (int i = 0; i < players.Length; i++)
+                {
+                    if (players[i].RestartButtonIsDown(players[i].playerIndex))
+                    {
+                        restartGame();
+                    }
+                }
+            }
 
             gui.Update(gameTime);
-
-            UpdateScores();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -204,7 +278,30 @@ namespace Pool
             {
                 // do some game over thing
                 Console.WriteLine("Game over! Player " + (index + 1) + " won!");
+                winningPlayer = index;
+                state = GameState.GameOver;
             }
+        }
+
+        private void restartGame()
+        {
+            // reset board vars
+            state = GameState.Play;
+            winningPlayer = -1;
+
+            // empty the lists
+            balls.Clear();
+            players = new Player[players.Length];
+
+            // create the players & balls again
+            CreatePlayers();
+            CreateBalls();
+        }
+
+        public void RemovePowerup(Powerup p)
+        {
+            balls.Remove(p);
+            p = null;
         }
         
     }

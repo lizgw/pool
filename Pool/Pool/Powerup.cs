@@ -16,19 +16,17 @@ namespace Pool
 
     class Powerup : Ball
     {
-        PowerupType type;
+        public PowerupType type;
+
+        public static Color[] colors = { Color.DarkOrange, Color.Purple, Color.LightGreen };
         
-        public Powerup(PowerupType aType)
+        public Powerup(PowerupType aType) : base()
         {
             type = aType;
+            color = colors[(int)type];
         }
 
         public void Update(GameTime gameTime)
-        {
-
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
         {
 
         }

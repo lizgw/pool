@@ -60,20 +60,24 @@ namespace Pool
             numPlayers = board.players.Length;
 
             // set up values for calculating position
+            // score box
             sbPadding = 150;
             sbMidPadding = 500;
             sbWidth = 150;
             sbHeight = 50;
             stPadding = sbPadding + 50;
+
             // power bars
             pbWidth = 25;
             pbHeight = 250;
             pbTopOffset = 125;
+
             // power bar fill
             fillOffset = 4;
             fillWidth = pbWidth - (fillOffset * 2);
             fillHeight = pbHeight - (fillOffset * 2);
             fillTopOffset = pbTopOffset + fillOffset;
+
             // powerup box background
             boxWidth = sbHeight;
             boxHeight = boxWidth;
@@ -134,6 +138,10 @@ namespace Pool
                 case GameState.Pause:
                     // draw pause GUI elements
                     break;
+                case GameState.GameOver:
+                    DrawPlayGUI(spriteBatch); // draw game overlay under it
+                    DrawGameOverGUI(spriteBatch);
+                    break;
             }
         }
 
@@ -157,6 +165,20 @@ namespace Pool
         private void DrawPauseGUI(SpriteBatch spriteBatch)
         {
             
+        }
+
+        private void DrawGameOverGUI(SpriteBatch spriteBatch)
+        {
+            // semi-transparent background
+            spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), playerColors[board.winningPlayer] * 0.50f);
+
+            // winning text
+            string winText = "Game Over!\nCongratulations player " + (board.winningPlayer + 1) + "!";
+            spriteBatch.DrawString(font, winText, new Vector2(100, 100), Color.White);
+
+            // Play again text
+            string againText = "Press X on any controller to play again";
+            spriteBatch.DrawString(font, againText, new Vector2(100, 300), Color.White);
         }
     }
 }

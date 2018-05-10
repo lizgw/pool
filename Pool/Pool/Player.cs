@@ -18,7 +18,7 @@ namespace Pool
         int points = 100;
         int scoreTimer = 0;
 
-        PlayerIndex playerIndex;
+        public PlayerIndex playerIndex;
         GamePadState oldGamePad;
         
         bool reversedMove = true;
@@ -35,7 +35,9 @@ namespace Pool
         float aimingFriction = .7f;
         float nonaimingFriction = .07f;
 
-        public Player(Color aColor, PlayerIndex aPlayerIndex) : base()
+        Board board;
+
+        public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
         {
             color = aColor;
@@ -59,6 +61,7 @@ namespace Pool
                     SetPos(new Vector2(Game1.screenWidth - offset, Game1.screenHeight - offset));
                     break;
             }
+            board = aBoard;
         }
 
         public void Update(GameTime gameTime)
@@ -84,6 +87,18 @@ namespace Pool
         {
             Vector2 cueStickPos = GetPos() - Physics.ScalarProduct(Physics.AngleToVector2(angle), GetRadius() + power * cueStickPowerMultiplier);
             spriteBatch.Draw(cueStickTexture, cueStickPos, cueStickTexture.Bounds, Color.White, angle + (float)Math.PI, cueStickPivot, 1, SpriteEffects.None, 1);
+        }
+
+        public void CollectPowerup(Powerup p)
+        {
+            Console.WriteLine(p.type); // TODO - change player stats somehow
+            board.RemovePowerup(p);
+        }
+
+        public bool RestartButtonIsDown(PlayerIndex playerIndex)
+        {
+            GamePadState gamePad = GamePad.GetState(playerIndex);
+            return gamePad.IsButtonDown(Buttons.X);
         }
 
         private void HandleInput()

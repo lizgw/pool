@@ -23,6 +23,13 @@ namespace Pool
                     Ball ball2 = balls[b2];
                     if (TryCollide(ball1, ball2))
                     {
+                        // check if the collision is between a player & a powerup
+                        Ball[] collisionBalls = PlayerPowerupCollision(ball1, ball2);
+                        //Console.WriteLine(collisionBalls == null);
+                        if (collisionBalls[0] != null)
+                        {
+                            ((Player)collisionBalls[0]).CollectPowerup((Powerup)collisionBalls[1]);
+                        }
                         SetNewVelocities(ball1, ball2);
                     }
                 }
@@ -62,6 +69,29 @@ namespace Pool
                 ball.SetPos(ball.GetPos() + ScalarProduct(ball.GetVelocity(), ball.GetPercentFrameLeft()));
                 ball.SetPercentFrameLeft(1);
             }
+        }
+
+        // if the two balls are a player and a powerup,
+        // returns an array with { PlayerBall, PowerupBall }
+        private static Ball[] PlayerPowerupCollision(Ball ball1, Ball ball2)
+        {
+            Ball[] arr = new Ball[2];
+
+            if (ball1.GetType() == typeof(Player) && ball2.GetType() == typeof(Powerup))
+            {
+                arr[0] = ball1;
+                arr[1] = ball2;
+                //Console.WriteLine("PP Collision");
+            }
+            else if (ball2.GetType() == typeof(Player) && ball1.GetType() == typeof(Powerup))
+            {
+                arr[0] = ball2;
+                arr[1] = ball1;
+                //Console.WriteLine("PP Collision");
+            }
+
+            //Console.WriteLine("Normal Collision");
+            return arr;
         }
 
         private static bool TryCollide(Ball ball1, Ball ball2)
