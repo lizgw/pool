@@ -137,5 +137,15 @@ namespace Pool
         {
             return new Vector2((float)(vect.X * scal), (float)(vect.Y * scal));
         }
+
+        public static Vector2 AngleToVector2(float angle)
+        {
+            return new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+        }
+
+        public static float Vector2ToAngle(Vector2 vector)
+        {
+            return (float) Math.Atan2(vector.Y, vector.X);
+        }
     }
 }

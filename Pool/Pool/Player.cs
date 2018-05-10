@@ -11,23 +11,28 @@ namespace Pool
 {
     class Player : Ball
     {
+        public static Texture2D cueStickTexture;
+        static Vector2 cueStickPivot;
+        float cueStickPowerMultiplier = 20;
+
         int points = 100;
         int scoreTimer = 0;
 
         PlayerIndex playerIndex;
         GamePadState oldGamePad;
         
-        bool reversedMove = false;
+        bool reversedMove = true;
         float maxPowerPerFrame = 0.05f;
         float maxPower = 4f;
 
-        Vector2 normalizedThumbstick;
+        float angle;
+        float angleCorrectionRate = 0.04f;
         float zeroBuffer = .2f; //only will record normalizedThumbstick if pulled back far enough
         float power = 0;
         bool isZero = true;
         bool wasZero = true;
 
-        float aimingFriction = 3f;
+        float aimingFriction = .7f;
         float nonaimingFriction = .07f;
 
         public Player(Color aColor, PlayerIndex aPlayerIndex) : base()
@@ -65,6 +70,20 @@ namespace Pool
         public void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
+            if (!isZero)
+                DrawCueStick(spriteBatch);
+        }
+
+        public static void SetCueStickTexture(Texture2D aTexture)
+        {
+            cueStickTexture = aTexture;
+            cueStickPivot = new Vector2(0, aTexture.Bounds.Height / 2);
+        }
+
+        private void DrawCueStick(SpriteBatch spriteBatch)
+        {
+            Vector2 cueStickPos = GetPos() - Physics.ScalarProduct(Physics.AngleToVector2(angle), GetRadius() + power * cueStickPowerMultiplier);
+            spriteBatch.Draw(cueStickTexture, cueStickPos, cueStickTexture.Bounds, Color.White, angle + (float)Math.PI, cueStickPivot, 1, SpriteEffects.None, 1);
         }
 
         private void HandleInput()
@@ -101,11 +120,7 @@ namespace Pool
         private void HandleMovement(Vector2 aThumbstick)
         {
             Vector2 thumbstick;
-
-            if (reversedMove)
-                thumbstick = new Vector2(-aThumbstick.X, aThumbstick.Y);
-            else
-                thumbstick = new Vector2(aThumbstick.X, -aThumbstick.Y);
+            thumbstick = new Vector2(aThumbstick.X, -aThumbstick.Y);
 
             wasZero = isZero;
             isZero = thumbstick.LengthSquared() <= 0;
@@ -116,7 +131,7 @@ namespace Pool
 
                 if (!wasZero)
                 {
-                    SetVelocity(GetVelocity() + Physics.ScalarProduct(normalizedThumbstick, power));
+                    SetVelocity(GetVelocity() + Physics.ScalarProduct(Physics.AngleToVector2(angle), power));
                     power = 0;
                 }
             }
@@ -124,18 +139,49 @@ namespace Pool
             {
                 SetFriction(aimingFriction);
 
+                if (wasZero)
+                {
+                    if (reversedMove)
+                        angle = Physics.Vector2ToAngle(-thumbstick);
+                    else
+                        angle = Physics.Vector2ToAngle(thumbstick);
+                }
+
                 power += maxPowerPerFrame * thumbstick.Length();
                 if (power > maxPower)
                     power = maxPower;
 
                 //this needs to be implemented into the GUI later on, as well as stamina
-                Console.WriteLine(power);
+                //Console.WriteLine(power);
 
                 if (thumbstick.LengthSquared() > zeroBuffer * zeroBuffer) {
-                    thumbstick.Normalize();
-                    normalizedThumbstick = thumbstick;
+                    float targetAngle;
+                    if (reversedMove)
+                        targetAngle = Physics.Vector2ToAngle(-thumbstick);
+                    else
+                        targetAngle = Physics.Vector2ToAngle(thumbstick);
+
+                    //Console.WriteLine("Angle: " + angle);
+                    //Console.WriteLine("Target Angle: " + targetAngle);
+
+                    float angleDifference = AngleDifference(angle, targetAngle);
+
+                    angle += angleCorrectionRate * angleDifference;
                 }
             }
+        }
+
+        private float AngleDifference(float startAngle, float endAngle)
+        {
+            //assume that startAngle is zero, then convert endAngle to fit within [-pi, pi]
+            float output = endAngle - startAngle;
+
+            while (output <= -Math.PI - 0.01)
+                output += (float)(2 * Math.PI);
+            while (output >= Math.PI + 0.01)
+                output -= (float)(2 * Math.PI);
+
+            return output;
         }
 
         public int GetPoints()

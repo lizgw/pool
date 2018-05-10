@@ -28,6 +28,7 @@ namespace Pool
         {
             content = new ContentManager(serviceProvider, "Content");//initializing the content manager
             Ball.defaultTexture = content.Load<Texture2D>("ball");// loading the ball sprite
+            Player.SetCueStickTexture(content.Load<Texture2D>("cueStick"));
 
             players = new Player[numPlayers];
             state = GameState.Play; // set this dynamically later
@@ -68,10 +69,9 @@ namespace Pool
                 Game1.screenWidth - (gui.pbWidth*2), Game1.screenHeight - (gui.sbHeight*2));
 
             // physics debug
-            AddBallTriangle(new Vector2(400, 200), 3, new Ball());
-            balls.Add(new Ball(new Vector2(400, 400), new Vector2(0, -10f), 20, 10, .07, Color.White));
+            AddBallTriangle(new Vector2(tableBounds.Center.X, tableBounds.Center.Y), 1, new Ball());
 
-            friction = 0.07;
+            friction = 0.10;
 
             gui = new GUI(serviceProvider, this);
         }
