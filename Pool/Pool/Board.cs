@@ -98,10 +98,19 @@ namespace Pool
             Powerup p = new Powerup((PowerupType)randType);
 
             // move it to a random location in the table bounds
-            int pSize = p.GetDrawRect().Width;
-            int xPos = rnd.Next(tableBounds.X + pSize, tableBounds.Right - pSize);
-            int yPos = rnd.Next(tableBounds.Y + pSize, tableBounds.Bottom - pSize);
-            p.SetPos(new Vector2(xPos, yPos));
+            bool foundPos = false;
+            do
+            {
+                Console.WriteLine("Finding pos for a powerup");
+                // move it
+                int pSize = p.GetDrawRect().Width;
+                int xPos = rnd.Next(tableBounds.X + pSize, tableBounds.Right - pSize);
+                int yPos = rnd.Next(tableBounds.Y + pSize, tableBounds.Bottom - pSize);
+                p.SetPos(new Vector2(xPos, yPos));
+
+                // check if it intersects a pre-existing ball
+                foundPos = !PowerupIntersection(p);
+            } while (!foundPos);
 
             // add it to the list
             balls.Add(p);
@@ -298,6 +307,25 @@ namespace Pool
         {
             balls.Remove(p);
             p = null;
+        }
+
+        private bool PowerupIntersection(Powerup p)
+        {
+            int i = 0;
+            
+            while (i < balls.Count())
+            {
+                //if (p.GetDrawRect().Intersects(balls[i].GetDrawRect()))
+                Vector2 dist = p.GetPos() - balls[i].GetPos();
+                if (Math.Abs(dist.X) < p.GetRadius() && Math.Abs(dist.Y) < p.GetRadius())
+                {
+                    Console.WriteLine("Powerup intersects another ball");
+                    return true;
+                }
+                i++;
+            }
+
+            return false;
         }
         
     }
