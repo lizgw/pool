@@ -17,6 +17,7 @@ namespace Pool
         public PlayerIndex playerIndex;
         GamePadState oldGamePad;
         ContentManager content;
+        Board board;
         float angle;
         float old_dist;
 
@@ -30,7 +31,7 @@ namespace Pool
        // public Player(IServiceProvider serviceProvider, Color aColor, PlayerIndex aPlayerIndex) : base()
 
 
-        public Player(Color aColor, PlayerIndex aPlayerIndex) : base()
+        public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
         {
             points = 100;
@@ -60,6 +61,7 @@ namespace Pool
 
             maxPower = .3f;
             maxVelocity = 4;
+            board = aBoard;
         }
 
         public void Update(GameTime gameTime)
@@ -71,6 +73,12 @@ namespace Pool
         public void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
+        }
+
+        public void CollectPowerup(Powerup p)
+        {
+            Console.WriteLine(p.type); // TODO - change player stats somehow
+            board.RemovePowerup(p);
         }
 
         public bool RestartButtonIsDown(PlayerIndex playerIndex)

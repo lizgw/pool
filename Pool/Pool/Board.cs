@@ -123,19 +123,19 @@ namespace Pool
                 switch (i)
                 {
                     case 0:
-                        players[i] = new Player(GUI.playerColors[0], PlayerIndex.One);
+                        players[i] = new Player(GUI.playerColors[0], PlayerIndex.One, this);
                         zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
                         break;
                     case 1:
-                        players[i] = new Player(GUI.playerColors[1], PlayerIndex.Two);
+                        players[i] = new Player(GUI.playerColors[1], PlayerIndex.Two, this);
                         zones.Add(new Zone(serviceProvider, new Rectangle(Game1.screenWidth / 2, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
                         break;
                     case 2:
-                        players[i] = new Player(GUI.playerColors[2], PlayerIndex.Three);
+                        players[i] = new Player(GUI.playerColors[2], PlayerIndex.Three, this);
                         zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, 5, 5), players[i]));
                         break;
                     case 3:
-                        players[i] = new Player(GUI.playerColors[3], PlayerIndex.Four);
+                        players[i] = new Player(GUI.playerColors[3], PlayerIndex.Four, this);
                         zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, 5, 5), players[i]));
                         break;
                     default:
@@ -292,6 +292,12 @@ namespace Pool
             // create the players & balls again
             CreatePlayers();
             CreateBalls();
+        }
+
+        public void RemovePowerup(Powerup p)
+        {
+            balls.Remove(p);
+            p = null;
         }
         
     }

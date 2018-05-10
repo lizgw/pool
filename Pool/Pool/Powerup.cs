@@ -16,7 +16,7 @@ namespace Pool
 
     class Powerup : Ball
     {
-        PowerupType type;
+        public PowerupType type;
 
         public static Color[] colors = { Color.DarkOrange, Color.Purple, Color.LightGreen };
         
