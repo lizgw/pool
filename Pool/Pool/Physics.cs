@@ -158,14 +158,24 @@ namespace Pool
             ball2.SetVelocity(newV2);
         }
 
-        private static double DotProduct(Vector2 vect1, Vector2 vect2)
+        public static double DotProduct(Vector2 vect1, Vector2 vect2)
         {
             return vect1.X * vect2.X + vect1.Y * vect2.Y;
         }
 
-        private static Vector2 ScalarProduct(Vector2 vect, double scal)
+        public static Vector2 ScalarProduct(Vector2 vect, double scal)
         {
             return new Vector2((float)(vect.X * scal), (float)(vect.Y * scal));
+        }
+
+        public static Vector2 AngleToVector2(float angle)
+        {
+            return new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+        }
+
+        public static float Vector2ToAngle(Vector2 vector)
+        {
+            return (float) Math.Atan2(vector.Y, vector.X);
         }
     }
 }

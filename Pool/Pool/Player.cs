@@ -11,32 +11,37 @@ namespace Pool
 {
     class Player : Ball
     {
-        int points;
-        int scoreTimer;
+        public static Texture2D cueStickTexture;
+        static Vector2 cueStickPivot;
+        float cueStickPowerMultiplier = 20;
+
+        int points = 100;
+        int scoreTimer = 0;
 
         public PlayerIndex playerIndex;
         GamePadState oldGamePad;
-        ContentManager content;
-        Board board;
+        
+        bool reversedMove = true;
+        float maxPowerPerFrame = 0.05f;
+        float maxPower = 4f;
+
         float angle;
-        float old_dist;
+        float angleCorrectionRate = 0.04f;
+        float zeroBuffer = .2f; //only will record normalizedThumbstick if pulled back far enough
+        float power = 0;
+        bool isZero = true;
+        bool wasZero = true;
 
-        float maxPower;
-        float maxVelocity;
+        float aimingFriction = .7f;
+        float nonaimingFriction = .07f;
 
-        float dist;
-        bool fire;
-        GamePadState gamePad;
-        int timer; // only for testing
-       // public Player(IServiceProvider serviceProvider, Color aColor, PlayerIndex aPlayerIndex) : base()
+        Board board;
 
+        Powerup currentPowerup;
 
         public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
         {
-            points = 100;
-            scoreTimer = 0;
-
             color = aColor;
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
@@ -58,10 +63,8 @@ namespace Pool
                     SetPos(new Vector2(Game1.screenWidth - offset, Game1.screenHeight - offset));
                     break;
             }
-
-            maxPower = .3f;
-            maxVelocity = 4;
             board = aBoard;
+            currentPowerup = null;
         }
 
         public void Update(GameTime gameTime)
@@ -73,12 +76,32 @@ namespace Pool
         public void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
+            if (!isZero)
+                DrawCueStick(spriteBatch);
+        }
+
+        public static void SetCueStickTexture(Texture2D aTexture)
+        {
+            cueStickTexture = aTexture;
+            cueStickPivot = new Vector2(0, aTexture.Bounds.Height / 2);
+        }
+
+        private void DrawCueStick(SpriteBatch spriteBatch)
+        {
+            Vector2 cueStickPos = GetPos() - Physics.ScalarProduct(Physics.AngleToVector2(angle), GetRadius() + power * cueStickPowerMultiplier);
+            spriteBatch.Draw(cueStickTexture, cueStickPos, cueStickTexture.Bounds, Color.White, angle + (float)Math.PI, cueStickPivot, 1, SpriteEffects.None, 1);
         }
 
         public void CollectPowerup(Powerup p)
         {
             Console.WriteLine(p.type); // TODO - change player stats somehow
+            currentPowerup = p;
             board.RemovePowerup(p);
+        }
+
+        public Powerup GetCurrentPowerup()
+        {
+            return currentPowerup;
         }
 
         public bool RestartButtonIsDown(PlayerIndex playerIndex)
@@ -92,11 +115,7 @@ namespace Pool
             GamePadState gamePad = GamePad.GetState(playerIndex);
 
             // basic movement
-            Vector2 leftStick = gamePad.ThumbSticks.Left;
-
-            Vector2 tentativeVelocity = GetVelocity() + new Vector2(leftStick.X * maxPower, -leftStick.Y * maxPower);
-            if (tentativeVelocity.LengthSquared() < maxVelocity * maxVelocity)
-                SetVelocity(tentativeVelocity);
+            HandleMovement(gamePad.ThumbSticks.Left);
 
             // start button - open pause menu
             if (gamePad.Buttons.Start.Equals(ButtonState.Pressed) &&
@@ -149,6 +168,72 @@ namespace Pool
             oldGamePad = gamePad;
         }
 
+        private void HandleMovement(Vector2 aThumbstick)
+        {
+            Vector2 thumbstick;
+            thumbstick = new Vector2(aThumbstick.X, -aThumbstick.Y);
+
+            wasZero = isZero;
+            isZero = thumbstick.LengthSquared() <= 0;
+
+            if (isZero)
+            {
+                SetFriction(nonaimingFriction);
+
+                if (!wasZero)
+                {
+                    SetVelocity(GetVelocity() + Physics.ScalarProduct(Physics.AngleToVector2(angle), power));
+                    power = 0;
+                }
+            }
+            else 
+            {
+                SetFriction(aimingFriction);
+
+                if (wasZero)
+                {
+                    if (reversedMove)
+                        angle = Physics.Vector2ToAngle(-thumbstick);
+                    else
+                        angle = Physics.Vector2ToAngle(thumbstick);
+                }
+
+                power += maxPowerPerFrame * thumbstick.Length();
+                if (power > maxPower)
+                    power = maxPower;
+
+                //this needs to be implemented into the GUI later on, as well as stamina
+                //Console.WriteLine(power);
+
+                if (thumbstick.LengthSquared() > zeroBuffer * zeroBuffer) {
+                    float targetAngle;
+                    if (reversedMove)
+                        targetAngle = Physics.Vector2ToAngle(-thumbstick);
+                    else
+                        targetAngle = Physics.Vector2ToAngle(thumbstick);
+
+                    //Console.WriteLine("Angle: " + angle);
+                    //Console.WriteLine("Target Angle: " + targetAngle);
+
+                    float angleDifference = AngleDifference(angle, targetAngle);
+
+                    angle += angleCorrectionRate * angleDifference;
+                }
+            }
+        }
+
+        private float AngleDifference(float startAngle, float endAngle)
+        {
+            //assume that startAngle is zero, then convert endAngle to fit within [-pi, pi]
+            float output = endAngle - startAngle;
+
+            while (output <= -Math.PI - 0.01)
+                output += (float)(2 * Math.PI);
+            while (output >= Math.PI + 0.01)
+                output -= (float)(2 * Math.PI);
+
+            return output;
+        }
 
         public int GetPoints()
         {
@@ -158,8 +243,9 @@ namespace Pool
         // returns true if the player won
         public bool CountDown()
         {
-            scoreTimer = (scoreTimer + 1) % 60;
-            if (scoreTimer == 59 && points > 0)
+            //I don't understand why, but it seems to be incrementing the scoreTimer twice as fast as it should be - so 120 instead of 60
+            scoreTimer = (scoreTimer + 1) % 120;
+            if (scoreTimer == 119 && points > 0)
             {
                 points--;
             }

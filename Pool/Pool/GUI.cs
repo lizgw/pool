@@ -16,6 +16,7 @@ namespace Pool
         GameState state;
 
         Texture2D barTexture;
+        Texture2D ballTexture;
         SpriteFont font;
 
         Board board;
@@ -53,6 +54,7 @@ namespace Pool
         {
             content = new ContentManager(serviceProvider, "Content");
             barTexture = content.Load<Texture2D>("bar");
+            ballTexture = content.Load<Texture2D>("ball");
             font = content.Load<SpriteFont>("SpriteFont1");
 
             board = aBoard;
@@ -147,18 +149,29 @@ namespace Pool
 
         private void DrawPlayGUI(SpriteBatch spriteBatch)
         {
-            for (int playerNum = 0; playerNum < numPlayers; playerNum++)
+            for (int i = 0; i < numPlayers; i++) // draw GUI elems for each player
             {
                 // score
-                spriteBatch.Draw(barTexture, scoreBoxes[playerNum], playerColors[playerNum]);
-                spriteBatch.DrawString(font, scoreTexts[playerNum], new Vector2(stPadding + (playerNum * (sbWidth + sbMidPadding)), 0), Color.White);
+                spriteBatch.Draw(barTexture, scoreBoxes[i], playerColors[i]);
+                spriteBatch.DrawString(font, scoreTexts[i], new Vector2(stPadding + (i * (sbWidth + sbMidPadding)), 0), Color.White);
 
                 // power bars
-                spriteBatch.Draw(barTexture, powerBarBackgrounds[playerNum], playerColors[playerNum] * 0.25f);
-                spriteBatch.Draw(barTexture, powerBars[playerNum], playerColors[playerNum]);
+                spriteBatch.Draw(barTexture, powerBarBackgrounds[i], playerColors[i] * 0.25f);
+                spriteBatch.Draw(barTexture, powerBars[i], playerColors[i]);
 
                 // power up boxes
-                spriteBatch.Draw(barTexture, powerupBoxes[playerNum], playerColors[playerNum]);
+                spriteBatch.Draw(barTexture, powerupBoxes[i], playerColors[i]);
+
+                // powerups
+                if (board.players[i].GetCurrentPowerup() != null)
+                {
+                    Color c = board.players[i].GetCurrentPowerup().GetColor();
+                    Vector2 position = new Vector2(powerupBoxes[i].X + powerupBoxes[i].Width/2, powerupBoxes[i].Y + powerupBoxes[i].Height / 2);
+                    float boxSize = 75f / 2f;
+                    float scale = 0.5f;
+                    Vector2 origin = new Vector2(boxSize, boxSize);
+                    spriteBatch.Draw(ballTexture, position, null, c, 0, origin, scale, SpriteEffects.None, 0);
+                }
             }
         }
 

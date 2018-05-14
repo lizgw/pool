@@ -39,6 +39,7 @@ namespace Pool
             serviceProvider = aServiceProvider;
             content = new ContentManager(serviceProvider, "Content");//initializing the content manager
             Ball.defaultTexture = content.Load<Texture2D>("ball");// loading the ball sprite
+            Player.SetCueStickTexture(content.Load<Texture2D>("cueStick"));
 
             players = new Player[numPlayers];
             state = GameState.Play; // set this dynamically later
@@ -52,11 +53,14 @@ namespace Pool
             gui = new GUI(serviceProvider, this);
             tableBounds = new Rectangle(gui.pbWidth, gui.sbHeight,
                 Game1.screenWidth - (gui.pbWidth*2), Game1.screenHeight - (gui.sbHeight*2));
+            
+            // physics debug
+            AddBallTriangle(new Vector2(tableBounds.Center.X, tableBounds.Center.Y), 1, new Ball());
 
             // Add the non-player balls
             CreateBalls();
 
-            friction = 0.07;
+            friction = 0.10;
 
             winningPlayer = -1;
 
@@ -98,10 +102,18 @@ namespace Pool
             Powerup p = new Powerup((PowerupType)randType);
 
             // move it to a random location in the table bounds
-            int pSize = p.GetDrawRect().Width;
-            int xPos = rnd.Next(tableBounds.X + pSize, tableBounds.Right - pSize);
-            int yPos = rnd.Next(tableBounds.Y + pSize, tableBounds.Bottom - pSize);
-            p.SetPos(new Vector2(xPos, yPos));
+            bool foundPos = false;
+            do
+            {
+                // move it
+                int pSize = p.GetDrawRect().Width;
+                int xPos = rnd.Next(tableBounds.X + pSize, tableBounds.Right - pSize);
+                int yPos = rnd.Next(tableBounds.Y + pSize, tableBounds.Bottom - pSize);
+                p.SetPos(new Vector2(xPos, yPos));
+
+                // check if it intersects a pre-existing ball
+                foundPos = !PowerupIntersection(p);
+            } while (!foundPos);
 
             // add it to the list
             balls.Add(p);
@@ -303,6 +315,21 @@ namespace Pool
         {
             balls.Remove(p);
             p = null;
+        }
+
+        private bool PowerupIntersection(Powerup p)
+        {
+            int i = 0;
+            
+            while (i < balls.Count())
+            {
+                Vector2 dist = p.GetPos() - balls[i].GetPos();
+                if (Math.Abs(dist.X) < p.GetRadius()*2 && Math.Abs(dist.Y) < p.GetRadius()*2)
+                    return true;
+                i++;
+            }
+
+            return false;
         }
         
     }
