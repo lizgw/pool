@@ -66,8 +66,8 @@ namespace Pool
 
             rnd = new Random();
             powerupTimer = 0;
-            powerupTimerMax = 360; // 6 seconds
-            powerupTimerMin = 180; // 3 seconds
+            powerupTimerMax = 720;
+            powerupTimerMin = 360;
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
 
             gui = new GUI(serviceProvider, this);
