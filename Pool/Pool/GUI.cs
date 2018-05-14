@@ -138,7 +138,7 @@ namespace Pool
                     DrawPlayGUI(spriteBatch);
                     break;
                 case GameState.Pause:
-                    // draw pause GUI elements
+                    DrawPauseGUI(spriteBatch);
                     break;
                 case GameState.GameOver:
                     DrawPlayGUI(spriteBatch); // draw game overlay under it
@@ -177,7 +177,20 @@ namespace Pool
 
         private void DrawPauseGUI(SpriteBatch spriteBatch)
         {
-            
+            DrawPlayGUI(spriteBatch);
+            //background
+            spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight),Color.Gray * 0.50f);
+            spriteBatch.DrawString(font,"paused", new Vector2((Game1.screenWidth / 2) - 125, 50), Color.White,0.0f,new Vector2(0,0),2f,SpriteEffects.None,0.01f);
+            //spriteBatch.DrawString(font, "Paused", new Vector2((Game1.screenWidth / 2) - 55,  50), Color.White);
+            //options
+            //resume
+            //spriteBatch.Draw(barTexture, new Rectangle((Game1.screenWidth/2)-32, (Game1.screenHeight/2)-10, 75, 20),  Color.White);
+            spriteBatch.DrawString(font, "resume: 'A'", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) - 50), Color.YellowGreen);
+            spriteBatch.DrawString(font, "Restart: 'B'", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) ), Color.Red);
+            spriteBatch.DrawString(font, "Main Menu: 'X'", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) +50), Color.Blue);
+            // spriteBatch.DrawString(font, "Restart", new Vector2((Game1.screenWidth / 2) - 32, (Game1.screenHeight / 2) - 10), Color.White);
+           
+
         }
 
         private void DrawGameOverGUI(SpriteBatch spriteBatch)

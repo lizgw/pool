@@ -189,6 +189,11 @@ namespace Pool
                     }
                 }
             }
+            else if (state == GameState.Pause)
+            {
+                foreach (Player p in players)
+                    p.Update(gameTime);
+            }
 
             gui.Update(gameTime);
         }
@@ -291,7 +296,7 @@ namespace Pool
             }
         }
 
-        private void restartGame()
+        public void restartGame()
         {
             // reset board vars
             state = GameState.Play;
