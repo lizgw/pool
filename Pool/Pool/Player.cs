@@ -37,6 +37,8 @@ namespace Pool
 
         Board board;
 
+        Powerup currentPowerup;
+
         public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
         {
@@ -62,6 +64,7 @@ namespace Pool
                     break;
             }
             board = aBoard;
+            currentPowerup = null;
         }
 
         public void Update(GameTime gameTime)
@@ -92,7 +95,13 @@ namespace Pool
         public void CollectPowerup(Powerup p)
         {
             Console.WriteLine(p.type); // TODO - change player stats somehow
+            currentPowerup = p;
             board.RemovePowerup(p);
+        }
+
+        public Powerup GetCurrentPowerup()
+        {
+            return currentPowerup;
         }
 
         public bool RestartButtonIsDown(PlayerIndex playerIndex)
