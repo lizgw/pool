@@ -100,25 +100,52 @@ namespace Pool
 
             // start button - open pause menu
             if (gamePad.Buttons.Start.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.Start.Equals(ButtonState.Pressed))
+                !oldGamePad.Buttons.Start.Equals(ButtonState.Pressed) && board.state == GameState.Play)
             {
                 Console.WriteLine("Pause menu");
+                board.state = GameState.Pause;
             }
 
             // A button - use power-up
             if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))
+                !oldGamePad.Buttons.A.Equals(ButtonState.Pressed) && board.state == GameState.Play)
             {
                 Console.WriteLine("Use powerup");
             }
 
             // B button - cancel shot
             if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))
+                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed) && board.state==GameState.Play)
             {
                 Console.WriteLine("Cancel shot");
             }
-
+            if (board.state == GameState.Pause)//pause menu controlls
+            {
+                if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))//resume
+                {
+                    board.state = GameState.Play;
+                    Console.WriteLine("resumed game");
+                }
+                if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//restart
+                {
+                    board.restartGame();
+                    Console.WriteLine("restarted");
+                }
+                if (gamePad.Buttons.X.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.X.Equals(ButtonState.Pressed))//main menu
+                {
+                    board.state = GameState.MainMenu;
+                    Console.WriteLine("switched to main menu");
+                }
+                if (gamePad.Buttons.Y.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.Y.Equals(ButtonState.Pressed))//none
+                {
+                   // board.state = GameState.Play;
+                    Console.WriteLine("switched");
+                }
+            }
             oldGamePad = gamePad;
         }
 
