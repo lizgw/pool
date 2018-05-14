@@ -121,6 +121,7 @@ namespace Pool
                     case PowerupType.Bomb:
                         break;
                     case PowerupType.Stamina:
+                        maxPower = 8f;
                         break;
                 }
             }
@@ -146,6 +147,7 @@ namespace Pool
                 case PowerupType.Bomb:
                     break;
                 case PowerupType.Stamina:
+                    maxPower = 4f;
                     break;
             }
 
