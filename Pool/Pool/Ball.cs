@@ -109,6 +109,12 @@ namespace Pool
             friction = aFriction;
         }
 
+        protected void SetRadius(double rad)
+        {
+            radius = rad;
+            drawRect = new Rectangle(drawRect.X, drawRect.Y, (int)(radius * 2), (int)(radius * 2));
+        }
+
         //GETTERS
 
         public Vector2 GetPos()

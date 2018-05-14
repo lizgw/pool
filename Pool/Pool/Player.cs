@@ -116,7 +116,7 @@ namespace Pool
                 {
                     case PowerupType.BigBall:
                         // increase radius
-                        Console.WriteLine("effect: " + currentPowerup.type);
+                        SetRadius(40);
                         break;
                     case PowerupType.Bomb:
                         break;
@@ -141,6 +141,7 @@ namespace Pool
             {
                 case PowerupType.BigBall:
                     // reset radius
+                    SetRadius(20);
                     break;
                 case PowerupType.Bomb:
                     break;
