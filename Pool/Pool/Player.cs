@@ -40,6 +40,7 @@ namespace Pool
         Powerup currentPowerup;
         int powerupEffectTimer;
         int powerupEffectTimerLimit;
+        bool usingPowerup;
 
         public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
@@ -66,17 +67,27 @@ namespace Pool
                     break;
             }
             board = aBoard;
+
             currentPowerup = null;
             powerupEffectTimer = 0;
             powerupEffectTimerLimit = 1200;
+            usingPowerup = false;
         }
 
         public void Update(GameTime gameTime)
         {
             HandleInput();
 
-            if (currentPowerup != null) // TODO: check for controller input to start this
-                ApplyPowerupEffects(gameTime);
+            if (usingPowerup)
+            {
+                // update countdown timer - TODO: use gameTime so it's more stable(?)
+                powerupEffectTimer = (powerupEffectTimer + 1) % (powerupEffectTimerLimit + 1);
+                Console.WriteLine("time: " + powerupEffectTimer + " / " + powerupEffectTimerLimit);
+
+                // if the timer reaches the end
+                if (powerupEffectTimer == powerupEffectTimerLimit)
+                    RemovePowerupEffects();
+            }
 
             base.Update(gameTime);          
         }
@@ -102,37 +113,28 @@ namespace Pool
 
         public void CollectPowerup(Powerup p)
         {
-            currentPowerup = p;
-            board.RemovePowerup(p);
+            if (currentPowerup == null)
+            {
+                currentPowerup = p;
+                board.RemovePowerup(p);
+            }
         }
 
-        private void ApplyPowerupEffects(GameTime gameTime)
+        private void ApplyPowerupEffects()
         {
-            // if effects haven't been applied yet
-            if (powerupEffectTimer == 0)
+            // apply effects
+            switch (currentPowerup.type)
             {
-                // apply effects
-                switch (currentPowerup.type)
-                {
-                    case PowerupType.BigBall:
-                        // increase radius
-                        SetRadius(40);
-                        break;
-                    case PowerupType.Bomb:
-                        break;
-                    case PowerupType.Stamina:
-                        maxPower = 8f;
-                        break;
-                }
+                case PowerupType.BigBall:
+                    // increase radius
+                    SetRadius(40);
+                    break;
+                case PowerupType.Bomb:
+                    break;
+                case PowerupType.Stamina:
+                    maxPower = 8f;
+                    break;
             }
-
-            // update countdown timer - TODO: use gameTime so it's more stable(?)
-            powerupEffectTimer = (powerupEffectTimer + 1) % (powerupEffectTimerLimit + 1);
-            Console.WriteLine("time: " + powerupEffectTimer + " / " + powerupEffectTimerLimit);
-
-            // if the timer reaches the end
-            if (powerupEffectTimer == powerupEffectTimerLimit)
-                RemovePowerupEffects();
         }
 
         private void RemovePowerupEffects()
@@ -153,6 +155,7 @@ namespace Pool
 
             // remove the powerup
             currentPowerup = null;
+            usingPowerup = false;
         }
 
         public Powerup GetCurrentPowerup()
@@ -185,7 +188,11 @@ namespace Pool
             if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
                 !oldGamePad.Buttons.A.Equals(ButtonState.Pressed) && board.state == GameState.Play)
             {
-                Console.WriteLine("Use powerup");
+                if (currentPowerup != null)
+                {
+                    ApplyPowerupEffects();
+                    usingPowerup = true;
+                }
             }
 
             // B button - cancel shot
