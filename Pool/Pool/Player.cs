@@ -38,6 +38,8 @@ namespace Pool
         Board board;
 
         Powerup currentPowerup;
+        int powerupEffectTimer;
+        int powerupEffectTimerLimit;
 
         public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
@@ -65,11 +67,17 @@ namespace Pool
             }
             board = aBoard;
             currentPowerup = null;
+            powerupEffectTimer = 0;
+            powerupEffectTimerLimit = 1200;
         }
 
         public void Update(GameTime gameTime)
         {
             HandleInput();
+
+            if (currentPowerup != null) // TODO: check for controller input to start this
+                ApplyPowerupEffects(gameTime);
+
             base.Update(gameTime);          
         }
 
@@ -94,9 +102,54 @@ namespace Pool
 
         public void CollectPowerup(Powerup p)
         {
-            Console.WriteLine(p.type); // TODO - change player stats somehow
             currentPowerup = p;
             board.RemovePowerup(p);
+        }
+
+        private void ApplyPowerupEffects(GameTime gameTime)
+        {
+            // if effects haven't been applied yet
+            if (powerupEffectTimer == 0)
+            {
+                // apply effects
+                switch (currentPowerup.type)
+                {
+                    case PowerupType.BigBall:
+                        // increase radius
+                        Console.WriteLine("effect: " + currentPowerup.type);
+                        break;
+                    case PowerupType.Bomb:
+                        break;
+                    case PowerupType.Stamina:
+                        break;
+                }
+            }
+
+            // update countdown timer - TODO: use gameTime so it's more stable(?)
+            powerupEffectTimer = (powerupEffectTimer + 1) % (powerupEffectTimerLimit + 1);
+            Console.WriteLine("time: " + powerupEffectTimer + " / " + powerupEffectTimerLimit);
+
+            // if the timer reaches the end
+            if (powerupEffectTimer == powerupEffectTimerLimit)
+                RemovePowerupEffects();
+        }
+
+        private void RemovePowerupEffects()
+        {
+            // reset stats that were affected
+            switch (currentPowerup.type)
+            {
+                case PowerupType.BigBall:
+                    // reset radius
+                    break;
+                case PowerupType.Bomb:
+                    break;
+                case PowerupType.Stamina:
+                    break;
+            }
+
+            // remove the powerup
+            currentPowerup = null;
         }
 
         public Powerup GetCurrentPowerup()
