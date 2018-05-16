@@ -22,8 +22,8 @@ namespace Pool
         static Color[] colors = { Color.DarkOrange, Color.Purple, Color.LightGreen };
 
         //Bomb stuff
-        static float blastRadius = 100;
-        static float maxBombForce = 100;
+        static float blastRadius = 200;
+        static float bombImpulse = 20;
 
         //Fast Charge stuff
         public static readonly float normalMaxPower = 4f;
@@ -42,27 +42,18 @@ namespace Pool
             count++;
         }
 
-        private static void BombActivate(Player p)
+        public static void BombActivate(Player p)
         {
             List<Ball> balls = p.GetBoard().GetBalls();
             foreach (Ball ball in balls)
             {
-                if ((ball.GetPos() - p.GetPos()).LengthSquared() >= blastRadius * blastRadius)
+                if ((ball.GetPos() - p.GetPos()).LengthSquared() <= blastRadius * blastRadius && ball != p)
                 {
-                    //Vector2 normalizedThingyIDontKnow
-                    //ball.SetVelocity(ball.GetVelocity() + Physics.ScalarProduct( maxBombForce / ball.GetMass())
+                    Vector2 normalizedAngleVector = ball.GetPos() - p.GetPos();
+                    normalizedAngleVector.Normalize();
+                    ball.SetVelocity(ball.GetVelocity() + Physics.ScalarProduct(normalizedAngleVector, bombImpulse / ball.GetMass()));
                 }
             }
-        }
-
-        private static void IncreasePowerActivate(Player p)
-        {
-            Console.WriteLine("INCREASE POWER");
-        }
-
-        private static void BigBallActivate(Player p)
-        {
-            Console.WriteLine("BIG BALL");
         }
 
         public PowerupType GetPowerupType()
