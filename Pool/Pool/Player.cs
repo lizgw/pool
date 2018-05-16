@@ -37,7 +37,11 @@ namespace Pool
 
         Board board;
         
+<<<<<<< HEAD
         PowerupType powerupType = PowerupType.Bomb;
+=======
+        public PowerupType powerupType = PowerupType.Null;
+>>>>>>> a8f0f5ef614afd1b465233e79e94d915885067d3
 
         int powerupEffectTimer;
         int powerupEffectTimerLimit;
