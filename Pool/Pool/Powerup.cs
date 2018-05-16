@@ -19,11 +19,13 @@ namespace Pool
         public PowerupType type;
 
         public static Color[] colors = { Color.DarkOrange, Color.Purple, Color.LightGreen };
+        public static int count; // total number of powerups created
         
         public Powerup(PowerupType aType) : base()
         {
             type = aType;
             color = colors[(int)type];
+            count++;
         }
 
         public void Update(GameTime gameTime)

@@ -175,7 +175,7 @@ namespace Pool
 
                 // create powerups
                 powerupTimer = (powerupTimer + 1) % (powerupInterval + 1);
-                if (powerupTimer == powerupInterval)
+                if (powerupTimer == powerupInterval && Powerup.count < 8)
                     CreatePowerup();
             }
             else if (state == GameState.GameOver)
@@ -315,6 +315,7 @@ namespace Pool
         {
             balls.Remove(p);
             p = null;
+            Powerup.count--;
         }
 
         private bool PowerupIntersection(Powerup p)
