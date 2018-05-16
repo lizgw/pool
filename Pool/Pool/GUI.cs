@@ -16,6 +16,7 @@ namespace Pool
         GameState state;
 
         Texture2D barTexture;
+        Texture2D ballTexture;
         SpriteFont font;
 
         Board board;
@@ -53,6 +54,7 @@ namespace Pool
         {
             content = new ContentManager(serviceProvider, "Content");
             barTexture = content.Load<Texture2D>("bar");
+            ballTexture = content.Load<Texture2D>("ball");
             font = content.Load<SpriteFont>("SpriteFont1");
 
             board = aBoard;
@@ -136,7 +138,7 @@ namespace Pool
                     DrawPlayGUI(spriteBatch);
                     break;
                 case GameState.Pause:
-                    // draw pause GUI elements
+                    DrawPauseGUI(spriteBatch);
                     break;
                 case GameState.GameOver:
                     DrawPlayGUI(spriteBatch); // draw game overlay under it
@@ -147,24 +149,48 @@ namespace Pool
 
         private void DrawPlayGUI(SpriteBatch spriteBatch)
         {
-            for (int playerNum = 0; playerNum < numPlayers; playerNum++)
+            for (int i = 0; i < numPlayers; i++) // draw GUI elems for each player
             {
                 // score
-                spriteBatch.Draw(barTexture, scoreBoxes[playerNum], playerColors[playerNum]);
-                spriteBatch.DrawString(font, scoreTexts[playerNum], new Vector2(stPadding + (playerNum * (sbWidth + sbMidPadding)), 0), Color.White);
+                spriteBatch.Draw(barTexture, scoreBoxes[i], playerColors[i]);
+                spriteBatch.DrawString(font, scoreTexts[i], new Vector2(stPadding + (i * (sbWidth + sbMidPadding)), 0), Color.White);
 
                 // power bars
-                spriteBatch.Draw(barTexture, powerBarBackgrounds[playerNum], playerColors[playerNum] * 0.25f);
-                spriteBatch.Draw(barTexture, powerBars[playerNum], playerColors[playerNum]);
+                spriteBatch.Draw(barTexture, powerBarBackgrounds[i], playerColors[i] * 0.25f);
+                spriteBatch.Draw(barTexture, powerBars[i], playerColors[i]);
 
                 // power up boxes
-                spriteBatch.Draw(barTexture, powerupBoxes[playerNum], playerColors[playerNum]);
+                spriteBatch.Draw(barTexture, powerupBoxes[i], playerColors[i]);
+
+                // powerups
+                if (board.players[i].GetPowerupType() != PowerupType.Null)
+                {
+                    Color c = Powerup.GetColor(board.players[i].GetPowerupType());
+                    Vector2 position = new Vector2(powerupBoxes[i].X + powerupBoxes[i].Width/2, powerupBoxes[i].Y + powerupBoxes[i].Height / 2);
+                    float boxSize = 75f / 2f;
+                    float scale = 0.5f;
+                    Vector2 origin = new Vector2(boxSize, boxSize);
+                    spriteBatch.Draw(ballTexture, position, null, c, 0, origin, scale, SpriteEffects.None, 0);
+                }
             }
         }
 
         private void DrawPauseGUI(SpriteBatch spriteBatch)
         {
-            
+            DrawPlayGUI(spriteBatch);
+            //background
+            spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight),Color.Gray * 0.50f);
+            spriteBatch.DrawString(font,"paused", new Vector2((Game1.screenWidth / 2) - 125, 50), Color.White,0.0f,new Vector2(0,0),2f,SpriteEffects.None,0.01f);
+            //spriteBatch.DrawString(font, "Paused", new Vector2((Game1.screenWidth / 2) - 55,  50), Color.White);
+            //options
+            //resume
+            //spriteBatch.Draw(barTexture, new Rectangle((Game1.screenWidth/2)-32, (Game1.screenHeight/2)-10, 75, 20),  Color.White);
+            spriteBatch.DrawString(font, "resume: 'A'", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) - 50), Color.YellowGreen);
+            spriteBatch.DrawString(font, "Restart: 'B'", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) ), Color.Red);
+            spriteBatch.DrawString(font, "Main Menu: 'X'", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) +50), Color.Blue);
+            // spriteBatch.DrawString(font, "Restart", new Vector2((Game1.screenWidth / 2) - 32, (Game1.screenHeight / 2) - 10), Color.White);
+           
+
         }
 
         private void DrawGameOverGUI(SpriteBatch spriteBatch)

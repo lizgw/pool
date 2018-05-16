@@ -63,8 +63,8 @@ namespace Pool
 
             rnd = new Random();
             powerupTimer = 0;
-            powerupTimerMax = 360; // 6 seconds
-            powerupTimerMin = 180; // 3 seconds
+            powerupTimerMax = 720;
+            powerupTimerMin = 360;
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
 
             gui = new GUI(serviceProvider, this);
@@ -104,10 +104,18 @@ namespace Pool
             Powerup p = new Powerup((PowerupType)randType);
 
             // move it to a random location in the table bounds
-            int pSize = p.GetDrawRect().Width;
-            int xPos = rnd.Next(tableBounds.X + pSize, tableBounds.Right - pSize);
-            int yPos = rnd.Next(tableBounds.Y + pSize, tableBounds.Bottom - pSize);
-            p.SetPos(new Vector2(xPos, yPos));
+            bool foundPos = false;
+            do
+            {
+                // move it
+                int pSize = p.GetDrawRect().Width;
+                int xPos = rnd.Next(tableBounds.X + pSize, tableBounds.Right - pSize);
+                int yPos = rnd.Next(tableBounds.Y + pSize, tableBounds.Bottom - pSize);
+                p.SetPos(new Vector2(xPos, yPos));
+
+                // check if it intersects a pre-existing ball
+                foundPos = !PowerupIntersection(p);
+            } while (!foundPos);
 
             // add it to the list
             balls.Add(p);
@@ -176,6 +184,11 @@ namespace Pool
                         RestartGame();
                     }
                 }
+            }
+            else if (state == GameState.Pause)
+            {
+                foreach (Player p in players)
+                    p.Update(gameTime);
             }
 
             gui.Update(gameTime);
@@ -278,8 +291,8 @@ namespace Pool
                 state = GameState.GameOver;
             }
         }
-
-        private void RestartGame()
+        
+        public void RestartGame()
         {
             // reset board vars
             state = GameState.Play;
@@ -299,10 +312,25 @@ namespace Pool
             balls.Remove(p);
             p = null;
         }
-
+        
         public List<Ball> GetBalls()
         {
             return balls;
+        }
+
+        private bool PowerupIntersection(Powerup p)
+        {
+            int i = 0;
+            
+            while (i < balls.Count())
+            {
+                Vector2 dist = p.GetPos() - balls[i].GetPos();
+                if (Math.Abs(dist.X) < p.GetRadius()*2 && Math.Abs(dist.Y) < p.GetRadius()*2)
+                    return true;
+                i++;
+            }
+
+            return false;
         }
     }
 }

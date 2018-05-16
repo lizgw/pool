@@ -10,47 +10,33 @@ namespace Pool
     public enum PowerupType
     {
         Bomb,
-        FastCharge,
+        IncreasePower,
         BigBall,
         Null
     }
 
     class Powerup : Ball
     {
-        public PowerupType type;
+        PowerupType type;
 
-        public static Color[] colors = { Color.DarkOrange, Color.Purple, Color.LightGreen };
+        static Color[] colors = { Color.DarkOrange, Color.Purple, Color.LightGreen };
 
         //Bomb stuff
         static float blastRadius = 100;
         static float maxBombForce = 100;
 
         //Fast Charge stuff
+        public static readonly float normalMaxPower = 4f;
+        public static readonly float bigMaxPower = 8f;
 
         //Big Ball stuff
+        public static readonly float normalRadius = 20;
+        public static readonly float bigRadius = 40;
 
         public Powerup(PowerupType aType) : base()
         {
             type = aType;
             color = colors[(int)type];
-        }
-
-        public static void Activate(Player p)
-        {
-            switch (p.GetPowerupType())
-            {
-                case PowerupType.Bomb:
-                    BombActivate(p);
-                    break;
-                case PowerupType.FastCharge:
-                    FastChargeActivate(p);
-                    break;
-                case PowerupType.BigBall:
-                    BigBallActivate(p);
-                    break;
-                case PowerupType.Null:
-                    break;
-            }
         }
 
         private static void BombActivate(Player p)
@@ -66,9 +52,9 @@ namespace Pool
             }
         }
 
-        private static void FastChargeActivate(Player p)
+        private static void IncreasePowerActivate(Player p)
         {
-            Console.WriteLine("FAST CHARGE");
+            Console.WriteLine("INCREASE POWER");
         }
 
         private static void BigBallActivate(Player p)
@@ -79,6 +65,11 @@ namespace Pool
         public PowerupType GetPowerupType()
         {
             return type;
+        }
+
+        public static Color GetColor(PowerupType p)
+        {
+            return colors[(int)p];
         }
     }
 }

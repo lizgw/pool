@@ -36,8 +36,12 @@ namespace Pool
         float nonaimingFriction = .07f;
 
         Board board;
-
+        
         PowerupType powerupType = PowerupType.Null;
+
+        int powerupEffectTimer;
+        int powerupEffectTimerLimit;
+        bool usingPowerup;
 
         public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
@@ -68,11 +72,28 @@ namespace Pool
             }
 
             board = aBoard;
+            
+            powerupEffectTimer = 0;
+            powerupEffectTimerLimit = 1200;
+            usingPowerup = false;
         }
 
         public void Update(GameTime gameTime)
         {
-            HandleInput();     
+            HandleInput();
+
+            if (usingPowerup)
+            {
+                // update countdown timer - TODO: use gameTime so it's more stable(?)
+                powerupEffectTimer = (powerupEffectTimer + 1) % (powerupEffectTimerLimit + 1);
+                Console.WriteLine("time: " + powerupEffectTimer + " / " + powerupEffectTimerLimit);
+
+                // if the timer reaches the end
+                if (powerupEffectTimer == powerupEffectTimerLimit)
+                    RemovePowerupEffects();
+            }
+
+            base.Update(gameTime);
         }
 
         new public void Draw(SpriteBatch spriteBatch)
@@ -100,10 +121,44 @@ namespace Pool
             board.RemovePowerup(p);
         }
 
-        public void UsePowerup()
+        private void ApplyPowerupEffects()
         {
-            Powerup.Activate(this);
+            // apply effects
+            switch (powerupType)
+            {
+                case PowerupType.BigBall:
+                    // increase radius
+                    SetRadius(Powerup.bigRadius);
+                    break;
+                case PowerupType.Bomb:
+                    break;
+                case PowerupType.IncreasePower:
+                    maxPower = Powerup.bigMaxPower;
+                    break;
+            }
+
+            usingPowerup = true;
+        }
+
+        private void RemovePowerupEffects()
+        {
+            // reset stats that were affected
+            switch (powerupType)
+            {
+                case PowerupType.BigBall:
+                    // reset radius
+                    SetRadius(Powerup.normalRadius);
+                    break;
+                case PowerupType.IncreasePower:
+                    maxPower = Powerup.normalMaxPower;
+                    break;
+                default:
+                    break;
+            }
+
+            // remove the powerup
             powerupType = PowerupType.Null;
+            usingPowerup = false;
         }
 
         public bool RestartButtonIsDown(PlayerIndex playerIndex)
@@ -121,25 +176,55 @@ namespace Pool
 
             // start button - open pause menu
             if (gamePad.Buttons.Start.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.Start.Equals(ButtonState.Pressed))
+                !oldGamePad.Buttons.Start.Equals(ButtonState.Pressed) && board.state == GameState.Play)
             {
                 Console.WriteLine("Pause menu");
+                board.state = GameState.Pause;
             }
 
             // A button - use power-up
             if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))
+                !oldGamePad.Buttons.A.Equals(ButtonState.Pressed) && board.state == GameState.Play)
             {
-                UsePowerup();
+                if (powerupType != PowerupType.Null)
+                {
+                    ApplyPowerupEffects();
+                }
             }
 
             // B button - cancel shot
             if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))
+                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed) && board.state==GameState.Play)
             {
                 Console.WriteLine("Cancel shot");
             }
-
+            if (board.state == GameState.Pause)//pause menu controlls
+            {
+                if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))//resume
+                {
+                    board.state = GameState.Play;
+                    Console.WriteLine("resumed game");
+                }
+                if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//restart
+                {
+                    board.RestartGame();
+                    Console.WriteLine("restarted");
+                }
+                if (gamePad.Buttons.X.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.X.Equals(ButtonState.Pressed))//main menu
+                {
+                    board.state = GameState.MainMenu;
+                    Console.WriteLine("switched to main menu");
+                }
+                if (gamePad.Buttons.Y.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.Y.Equals(ButtonState.Pressed))//none
+                {
+                   // board.state = GameState.Play;
+                    Console.WriteLine("switched");
+                }
+            }
             oldGamePad = gamePad;
         }
 
@@ -177,18 +262,12 @@ namespace Pool
                 if (power > maxPower)
                     power = maxPower;
 
-                //this needs to be implemented into the GUI later on, as well as stamina
-                //Console.WriteLine(power);
-
                 if (thumbstick.LengthSquared() > zeroBuffer * zeroBuffer) {
                     float targetAngle;
                     if (reversedMove)
                         targetAngle = Physics.Vector2ToAngle(-thumbstick);
                     else
                         targetAngle = Physics.Vector2ToAngle(thumbstick);
-
-                    //Console.WriteLine("Angle: " + angle);
-                    //Console.WriteLine("Target Angle: " + targetAngle);
 
                     float angleDifference = AngleDifference(angle, targetAngle);
 
