@@ -43,8 +43,6 @@ namespace Pool
         int powerupEffectTimerLimit;
         bool usingPowerup;
 
-        double defaultRadius;
-
         public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
         {
@@ -78,8 +76,6 @@ namespace Pool
             powerupEffectTimer = 0;
             powerupEffectTimerLimit = 1200;
             usingPowerup = false;
-
-            defaultRadius = GetRadius();
         }
 
         public void Update(GameTime gameTime)
@@ -93,7 +89,7 @@ namespace Pool
                 //Console.WriteLine("time: " + powerupEffectTimer + " / " + powerupEffectTimerLimit);
 
                 if (powerupType == PowerupType.BigBall)
-                    ChangeRadiusOverTime(40);
+                    ChangeRadiusOverTime(Powerup.bigRadius);
 
                 // if the timer reaches the end
                 if (powerupEffectTimer == powerupEffectTimerLimit)
@@ -135,7 +131,8 @@ namespace Pool
             {
                 case PowerupType.BigBall:
                     // increase radius
-                    ChangeRadiusOverTime(40);
+                    ChangeRadiusOverTime(Powerup.bigRadius);
+                    SetMass(1000);
                     break;
                 case PowerupType.Bomb:
                     break;
@@ -155,6 +152,7 @@ namespace Pool
                 case PowerupType.BigBall:
                     // reset radius
                     SetRadius(Powerup.normalRadius);
+                    SetMass(5);
                     break;
                 case PowerupType.IncreasePower:
                     maxPower = Powerup.normalMaxPower;
@@ -171,7 +169,7 @@ namespace Pool
         private void ChangeRadiusOverTime(double maxRadius)
         {
             double percentDone = (double)powerupEffectTimer / powerupEffectTimerLimit;
-            double amountToIncrease = maxRadius - defaultRadius;
+            double amountToIncrease = maxRadius - Powerup.normalRadius;
 
             // dividing by 95 and 500 keeps it from changing size too fast
 
