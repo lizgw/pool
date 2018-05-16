@@ -53,9 +53,6 @@ namespace Pool
             gui = new GUI(serviceProvider, this);
             tableBounds = new Rectangle(gui.pbWidth, gui.sbHeight,
                 Game1.screenWidth - (gui.pbWidth*2), Game1.screenHeight - (gui.sbHeight*2));
-            
-            // physics debug
-            AddBallTriangle(new Vector2(tableBounds.Center.X, tableBounds.Center.Y), 1, new Ball());
 
             // Add the non-player balls
             CreateBalls();
@@ -71,6 +68,11 @@ namespace Pool
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
 
             gui = new GUI(serviceProvider, this);
+        }
+
+        private void CreateBalls()
+        {
+            AddBallTriangle(new Vector2(tableBounds.Center.X, tableBounds.Center.Y), 4, new Ball());
         }
 
         private void AddBallTriangle(Vector2 centerPos, int sideLength, Ball ballPrefab)
@@ -112,12 +114,6 @@ namespace Pool
 
             // reset the timer
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
-        }
-
-        private void CreateBalls()
-        {
-            AddBallTriangle(new Vector2(400, 200), 3, new Ball());
-            balls.Add(new Ball(new Vector2(400, 400), new Vector2(0, -10f), 20, 10, 1, Color.White));
         }
 
         private void CreatePlayers()
@@ -177,7 +173,7 @@ namespace Pool
                 {
                     if (players[i].RestartButtonIsDown(players[i].playerIndex))
                     {
-                        restartGame();
+                        RestartGame();
                     }
                 }
             }
@@ -283,7 +279,7 @@ namespace Pool
             }
         }
 
-        private void restartGame()
+        private void RestartGame()
         {
             // reset board vars
             state = GameState.Play;
@@ -303,6 +299,10 @@ namespace Pool
             balls.Remove(p);
             p = null;
         }
-        
+
+        public List<Ball> GetBalls()
+        {
+            return balls;
+        }
     }
 }

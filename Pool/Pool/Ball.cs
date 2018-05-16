@@ -48,11 +48,6 @@ namespace Pool
             pos = aPosition;
         }
 
-        public void Update(GameTime gameTime)
-        {
-
-        }
-
         public void Draw(SpriteBatch spriteBatch)
         {
             drawRect.X = (int)(pos.X - radius);

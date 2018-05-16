@@ -37,12 +37,17 @@ namespace Pool
 
         Board board;
 
+        PowerupType powerupType = PowerupType.Null;
+
         public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
         {
             color = aColor;
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
+
+            //should mass be greater than normal?
+            SetMass(20);
 
             int offset = 200;
             // set player position based on the index
@@ -61,16 +66,16 @@ namespace Pool
                     SetPos(new Vector2(Game1.screenWidth - offset, Game1.screenHeight - offset));
                     break;
             }
+
             board = aBoard;
         }
 
         public void Update(GameTime gameTime)
         {
-            HandleInput();
-            base.Update(gameTime);          
+            HandleInput();     
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        new public void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
             if (!isZero)
@@ -91,8 +96,14 @@ namespace Pool
 
         public void CollectPowerup(Powerup p)
         {
-            Console.WriteLine(p.type); // TODO - change player stats somehow
+            powerupType = p.GetPowerupType();
             board.RemovePowerup(p);
+        }
+
+        public void UsePowerup()
+        {
+            Powerup.Activate(this);
+            powerupType = PowerupType.Null;
         }
 
         public bool RestartButtonIsDown(PlayerIndex playerIndex)
@@ -119,7 +130,7 @@ namespace Pool
             if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
                 !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))
             {
-                Console.WriteLine("Use powerup");
+                UsePowerup();
             }
 
             // B button - cancel shot
@@ -199,11 +210,6 @@ namespace Pool
             return output;
         }
 
-        public int GetPoints()
-        {
-            return points;
-        }
-
         // returns true if the player won
         public bool CountDown()
         {
@@ -220,5 +226,19 @@ namespace Pool
                 return false;
         }
 
+        public int GetPoints()
+        {
+            return points;
+        }
+
+        public PowerupType GetPowerupType()
+        {
+            return powerupType;
+        }
+
+        public Board GetBoard()
+        {
+            return board;
+        }
     }
 }
