@@ -42,6 +42,8 @@ namespace Pool
         int powerupEffectTimerLimit;
         bool usingPowerup;
 
+        double defaultRadius;
+
         public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
         {
@@ -72,6 +74,8 @@ namespace Pool
             powerupEffectTimer = 0;
             powerupEffectTimerLimit = 1200;
             usingPowerup = false;
+
+            defaultRadius = GetRadius();
         }
 
         public void Update(GameTime gameTime)
@@ -82,7 +86,10 @@ namespace Pool
             {
                 // update countdown timer - TODO: use gameTime so it's more stable(?)
                 powerupEffectTimer = (powerupEffectTimer + 1) % (powerupEffectTimerLimit + 1);
-                Console.WriteLine("time: " + powerupEffectTimer + " / " + powerupEffectTimerLimit);
+                //Console.WriteLine("time: " + powerupEffectTimer + " / " + powerupEffectTimerLimit);
+
+                if (currentPowerup.type == PowerupType.BigBall)
+                    ChangeRadiusOverTime(40);
 
                 // if the timer reaches the end
                 if (powerupEffectTimer == powerupEffectTimerLimit)
@@ -127,7 +134,7 @@ namespace Pool
             {
                 case PowerupType.BigBall:
                     // increase radius
-                    SetRadius(40);
+                    ChangeRadiusOverTime(40);
                     break;
                 case PowerupType.Bomb:
                     break;
@@ -156,6 +163,21 @@ namespace Pool
             // remove the powerup
             currentPowerup = null;
             usingPowerup = false;
+        }
+
+        private void ChangeRadiusOverTime(double maxRadius)
+        {
+            double percentDone = (double)powerupEffectTimer / powerupEffectTimerLimit;
+            double amountToIncrease = maxRadius - defaultRadius;
+
+            // dividing by 95 and 500 keeps it from changing size too fast
+
+            if (percentDone < .3) // first third of transition
+                SetRadius(GetRadius() + (amountToIncrease * percentDone / 95));
+            else if (percentDone >= .3 && percentDone < .6) // second third
+                SetRadius(maxRadius);
+            else // last third
+                SetRadius(GetRadius() - (amountToIncrease * percentDone / 500));
         }
 
         public Powerup GetCurrentPowerup()
