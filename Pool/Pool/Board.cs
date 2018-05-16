@@ -123,15 +123,7 @@ namespace Pool
             // reset the timer
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
         }
-
-<<<<<<< HEAD
-=======
-        private void CreateBalls()
-        {
-            AddBallTriangle(new Vector2(400, 200), 3, new Ball());
-        }
-
->>>>>>> ec7b16eeeafea843c2d995e1e61995e556ed4a3b
+        
         private void CreatePlayers()
         {
             for (int i = 0; i < players.Length; i++)

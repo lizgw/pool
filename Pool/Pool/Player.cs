@@ -37,7 +37,7 @@ namespace Pool
 
         Board board;
         
-        PowerupType powerupType = PowerupType.Null;
+        PowerupType powerupType = PowerupType.Bomb;
 
         int powerupEffectTimer;
         int powerupEffectTimerLimit;
@@ -133,15 +133,17 @@ namespace Pool
                     // increase radius
                     ChangeRadiusOverTime(Powerup.bigRadius);
                     SetMass(1000);
+                    usingPowerup = true;
                     break;
                 case PowerupType.Bomb:
+                    Powerup.BombActivate(this);
+                    RemovePowerupEffects();
                     break;
                 case PowerupType.IncreasePower:
                     maxPower = Powerup.bigMaxPower;
+                    usingPowerup = true;
                     break;
             }
-
-            usingPowerup = true;
         }
 
         private void RemovePowerupEffects()
