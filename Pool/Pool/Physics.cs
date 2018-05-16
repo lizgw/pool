@@ -26,7 +26,7 @@ namespace Pool
                         // check if the collision is between a player & a powerup
                         Ball[] collisionBalls = PlayerPowerupCollision(ball1, ball2);
 
-                        if (collisionBalls[0] != null)
+                        if (collisionBalls[0] != null && ((Player)collisionBalls[0]).powerupType == PowerupType.Null)
                         {
                             ((Player)collisionBalls[0]).CollectPowerup((Powerup)collisionBalls[1]);
                         }
