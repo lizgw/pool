@@ -32,11 +32,14 @@ namespace Pool
         //Big Ball stuff
         public static readonly float normalRadius = 20;
         public static readonly float bigRadius = 40;
+        
+        public static int count; // total number of powerups created
 
         public Powerup(PowerupType aType) : base()
         {
             type = aType;
             color = colors[(int)type];
+            count++;
         }
 
         private static void BombActivate(Player p)
