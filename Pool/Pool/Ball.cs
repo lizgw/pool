@@ -48,10 +48,7 @@ namespace Pool
             pos = aPosition;
         }
 
-        public void Update(GameTime gameTime)
-        {
-
-        }
+        public void Update(GameTime gameTime) { }
 
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -107,6 +104,12 @@ namespace Pool
         protected void SetFriction(double aFriction)
         {
             friction = aFriction;
+        }
+
+        protected void SetRadius(double rad)
+        {
+            radius = rad;
+            drawRect = new Rectangle(drawRect.X, drawRect.Y, (int)(radius * 2), (int)(radius * 2));
         }
 
         //GETTERS

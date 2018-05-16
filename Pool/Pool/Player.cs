@@ -37,8 +37,12 @@ namespace Pool
 
        
         Board board;
+        
+        public PowerupType powerupType = PowerupType.Null;
 
-        Powerup currentPowerup;
+        int powerupEffectTimer;
+        int powerupEffectTimerLimit;
+        bool usingPowerup;
 
        public  GamePadState gamePad ;
         
@@ -50,6 +54,9 @@ namespace Pool
             color = aColor;
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
+
+            //should mass be greater than normal?
+            SetMass(20);
 
             int offset = 200;
             // set player position based on the index
@@ -68,18 +75,38 @@ namespace Pool
                     SetPos(new Vector2(Game1.screenWidth - offset, Game1.screenHeight - offset));
                     break;
             }
+
             board = aBoard;
-            currentPowerup = null;
+            
+            powerupEffectTimer = 0;
+            powerupEffectTimerLimit = 1200;
+            usingPowerup = false;
         }
 
         public void Update(GameTime gameTime)
         {
             HandleInput();
 
-                  base.Update(gameTime);          
+
+            if (usingPowerup)
+            {
+                // update countdown timer - TODO: use gameTime so it's more stable(?)
+                powerupEffectTimer = (powerupEffectTimer + 1) % (powerupEffectTimerLimit + 1);
+                //Console.WriteLine("time: " + powerupEffectTimer + " / " + powerupEffectTimerLimit);
+
+                if (powerupType == PowerupType.BigBall)
+                    ChangeRadiusOverTime(Powerup.bigRadius);
+
+                // if the timer reaches the end
+                if (powerupEffectTimer == powerupEffectTimerLimit)
+                    RemovePowerupEffects();
+            }
+
+            base.Update(gameTime);
+
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        new public void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
             if (!isZero)
@@ -100,16 +127,67 @@ namespace Pool
 
         public void CollectPowerup(Powerup p)
         {
-            Console.WriteLine(p.type); // TODO - change player stats somehow
-            currentPowerup = p;
+            powerupType = p.GetPowerupType();
             board.RemovePowerup(p);
         }
 
-        public Powerup GetCurrentPowerup()
+        private void ApplyPowerupEffects()
         {
-            return currentPowerup;
+            // apply effects
+            switch (powerupType)
+            {
+                case PowerupType.BigBall:
+                    // increase radius
+                    ChangeRadiusOverTime(Powerup.bigRadius);
+                    SetMass(1000);
+                    break;
+                case PowerupType.Bomb:
+                    break;
+                case PowerupType.IncreasePower:
+                    maxPower = Powerup.bigMaxPower;
+                    break;
+            }
+
+            usingPowerup = true;
         }
 
+        private void RemovePowerupEffects()
+        {
+            // reset stats that were affected
+            switch (powerupType)
+            {
+                case PowerupType.BigBall:
+                    // reset radius
+                    SetRadius(Powerup.normalRadius);
+                    SetMass(5);
+                    break;
+                case PowerupType.IncreasePower:
+                    maxPower = Powerup.normalMaxPower;
+                    break;
+                default:
+                    break;
+            }
+
+            // remove the powerup
+            powerupType = PowerupType.Null;
+            usingPowerup = false;
+        }
+        
+        private void ChangeRadiusOverTime(double maxRadius)
+        {
+            double percentDone = (double)powerupEffectTimer / powerupEffectTimerLimit;
+            double amountToIncrease = maxRadius - Powerup.normalRadius;
+
+            // dividing by 95 and 500 keeps it from changing size too fast
+
+            if (percentDone < .3) // first third of transition
+                SetRadius(GetRadius() + (amountToIncrease * percentDone / 95));
+            else if (percentDone >= .3 && percentDone < .6) // second third
+                SetRadius(maxRadius);
+            else // last third
+                SetRadius(GetRadius() - (amountToIncrease * percentDone / 500));
+        }
+        
         public bool RestartButtonIsDown(PlayerIndex playerIndex)
         {
             GamePadState gamePad = GamePad.GetState(playerIndex);
@@ -136,7 +214,10 @@ namespace Pool
             if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
                 !oldGamePad.Buttons.A.Equals(ButtonState.Pressed) && board.state == GameState.Play)
             {
-                Console.WriteLine("Use powerup");
+                if (powerupType != PowerupType.Null)
+                {
+                    ApplyPowerupEffects();
+                }
             }
 
             // B button - cancel shot
@@ -156,7 +237,7 @@ namespace Pool
                 if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
                 !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//restart
                 {
-                    board.restartGame();
+                    board.RestartGame();
                     Console.WriteLine("restarted");
                 }
                 if (gamePad.Buttons.X.Equals(ButtonState.Pressed) &&
@@ -218,18 +299,12 @@ namespace Pool
                 if (power > maxPower)
                     power = maxPower;
 
-                //this needs to be implemented into the GUI later on, as well as stamina
-                //Console.WriteLine(power);
-
                 if (thumbstick.LengthSquared() > zeroBuffer * zeroBuffer) {
                     float targetAngle;
                     if (reversedMove)
                         targetAngle = Physics.Vector2ToAngle(-thumbstick);
                     else
                         targetAngle = Physics.Vector2ToAngle(thumbstick);
-
-                    //Console.WriteLine("Angle: " + angle);
-                    //Console.WriteLine("Target Angle: " + targetAngle);
 
                     float angleDifference = AngleDifference(angle, targetAngle);
 
@@ -251,11 +326,6 @@ namespace Pool
             return output;
         }
 
-        public int GetPoints()
-        {
-            return points;
-        }
-
         // returns true if the player won
         public bool CountDown()
         {
@@ -271,9 +341,22 @@ namespace Pool
             else
                 return false;
         }
-        public void vibrate()
+
+
+        public int GetPoints()
         {
-            GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
+            return points;
+        }
+
+        public PowerupType GetPowerupType()
+        {
+            return powerupType;
+        }
+
+        public Board GetBoard()
+        {
+            return board;
+
         }
     }
 }

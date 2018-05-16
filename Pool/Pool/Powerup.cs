@@ -10,25 +10,69 @@ namespace Pool
     public enum PowerupType
     {
         Bomb,
-        Stamina,
-        BigBall
+        IncreasePower,
+        BigBall,
+        Null
     }
 
     class Powerup : Ball
     {
-        public PowerupType type;
+        PowerupType type;
 
-        public static Color[] colors = { Color.DarkOrange, Color.Purple, Color.LightGreen };
+        static Color[] colors = { Color.DarkOrange, Color.Purple, Color.LightGreen };
+
+        //Bomb stuff
+        static float blastRadius = 100;
+        static float maxBombForce = 100;
+
+        //Fast Charge stuff
+        public static readonly float normalMaxPower = 4f;
+        public static readonly float bigMaxPower = 8f;
+
+        //Big Ball stuff
+        public static readonly float normalRadius = 20;
+        public static readonly float bigRadius = 40;
         
+        public static int count; // total number of powerups created
+
         public Powerup(PowerupType aType) : base()
         {
             type = aType;
             color = colors[(int)type];
+            count++;
         }
 
-        public void Update(GameTime gameTime)
+        private static void BombActivate(Player p)
         {
+            List<Ball> balls = p.GetBoard().GetBalls();
+            foreach (Ball ball in balls)
+            {
+                if ((ball.GetPos() - p.GetPos()).LengthSquared() >= blastRadius * blastRadius)
+                {
+                    //Vector2 normalizedThingyIDontKnow
+                    //ball.SetVelocity(ball.GetVelocity() + Physics.ScalarProduct( maxBombForce / ball.GetMass())
+                }
+            }
+        }
 
+        private static void IncreasePowerActivate(Player p)
+        {
+            Console.WriteLine("INCREASE POWER");
+        }
+
+        private static void BigBallActivate(Player p)
+        {
+            Console.WriteLine("BIG BALL");
+        }
+
+        public PowerupType GetPowerupType()
+        {
+            return type;
+        }
+
+        public static Color GetColor(PowerupType p)
+        {
+            return colors[(int)p];
         }
     }
 }

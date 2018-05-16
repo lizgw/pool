@@ -57,9 +57,6 @@ namespace Pool
             gui = new GUI(serviceProvider, this);
             tableBounds = new Rectangle(gui.pbWidth, gui.sbHeight,
                 Game1.screenWidth - (gui.pbWidth*2), Game1.screenHeight - (gui.sbHeight*2));
-            
-            // physics debug
-            AddBallTriangle(new Vector2(tableBounds.Center.X, tableBounds.Center.Y), 1, new Ball());
 
             // Add the non-player balls
             CreateBalls();
@@ -70,11 +67,16 @@ namespace Pool
 
             rnd = new Random();
             powerupTimer = 0;
-            powerupTimerMax = 360; // 6 seconds
-            powerupTimerMin = 180; // 3 seconds
+            powerupTimerMax = 720;
+            powerupTimerMin = 360;
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
           
             gui = new GUI(serviceProvider, this);
+        }
+
+        private void CreateBalls()
+        {
+            AddBallTriangle(new Vector2(tableBounds.Center.X, tableBounds.Center.Y), 4, new Ball());
         }
 
         private void AddBallTriangle(Vector2 centerPos, int sideLength, Ball ballPrefab)
@@ -126,12 +128,6 @@ namespace Pool
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
         }
 
-        private void CreateBalls()
-        {
-            AddBallTriangle(new Vector2(400, 200), 3, new Ball());
-            balls.Add(new Ball(new Vector2(400, 400), new Vector2(0, -10f), 20, 10, 1, Color.White));
-        }
-
         private void CreatePlayers()
         {
             for (int i = 0; i < players.Length; i++)
@@ -140,11 +136,11 @@ namespace Pool
                 {
                     case 0:
                         players[i] = new Player(GUI.playerColors[0], PlayerIndex.One, this);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
+                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, Game1.screenWidth / 2-100, Game1.screenHeight), players[i]));
                         break;
                     case 1:
                         players[i] = new Player(GUI.playerColors[1], PlayerIndex.Two, this);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(Game1.screenWidth / 2, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
+                        zones.Add(new Zone(serviceProvider, new Rectangle(Game1.screenWidth / 2+100, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
                         break;
                     case 2:
                         players[i] = new Player(GUI.playerColors[2], PlayerIndex.Three, this);
@@ -179,7 +175,7 @@ namespace Pool
 
                 // create powerups
                 powerupTimer = (powerupTimer + 1) % (powerupInterval + 1);
-                if (powerupTimer == powerupInterval)
+                if (powerupTimer == powerupInterval && Powerup.count < 8)
                     CreatePowerup();
                
             }
@@ -190,7 +186,7 @@ namespace Pool
                 {
                     if (players[i].RestartButtonIsDown(players[i].playerIndex))
                     {
-                        restartGame();
+                        RestartGame();
                     }
                 }
             }
@@ -314,8 +310,8 @@ namespace Pool
                 state = GameState.GameOver;
             }
         }
-
-        public void restartGame()
+        
+        public void RestartGame()
         {
             // reset board vars
             state = GameState.Play;
@@ -334,6 +330,12 @@ namespace Pool
         {
             balls.Remove(p);
             p = null;
+            Powerup.count--;
+        }
+        
+        public List<Ball> GetBalls()
+        {
+            return balls;
         }
 
         private bool PowerupIntersection(Powerup p)
@@ -350,6 +352,7 @@ namespace Pool
 
             return false;
         }
+
         public static void vibrate(Player player, float index)
         {
             
@@ -357,5 +360,6 @@ namespace Pool
            
             
         }
+
     }
 }

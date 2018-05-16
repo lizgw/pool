@@ -25,14 +25,14 @@ namespace Pool
                     {
                         // check if the collision is between a player & a powerup
                         Ball[] collisionBalls = PlayerPowerupCollision(ball1, ball2);
-                        //Console.WriteLine(collisionBalls == null);
-                        if (collisionBalls[0] != null)
+
+                        if (collisionBalls[0] != null && ((Player)collisionBalls[0]).powerupType == PowerupType.Null)
                         {
                             ((Player)collisionBalls[0]).CollectPowerup((Powerup)collisionBalls[1]);
                         }
-                        
-                       
-                            SetNewVelocities(ball1, ball2);
+
+                        else
+                             SetNewVelocities(ball1, ball2);
                     }
                 }
             }
@@ -153,8 +153,8 @@ namespace Pool
 
             double optimizedP = (2.0 * (a1 - a2)) / (ball1.GetMass() + ball2.GetMass());
 
-            Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball1.GetMass());
-            Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball2.GetMass());
+            Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball2.GetMass());
+            Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball1.GetMass());
 
             ball1.SetVelocity(newV1);
             ball2.SetVelocity(newV2);

@@ -166,9 +166,9 @@ namespace Pool
                 spriteBatch.Draw(barTexture, powerupBoxes[i], playerColors[i]);
 
                 // powerups
-                if (board.players[i].GetCurrentPowerup() != null)
+                if (board.players[i].GetPowerupType() != PowerupType.Null)
                 {
-                    Color c = board.players[i].GetCurrentPowerup().GetColor();
+                    Color c = Powerup.GetColor(board.players[i].GetPowerupType());
                     Vector2 position = new Vector2(powerupBoxes[i].X + powerupBoxes[i].Width/2, powerupBoxes[i].Y + powerupBoxes[i].Height / 2);
                     float boxSize = 75f / 2f;
                     float scale = 0.5f;
