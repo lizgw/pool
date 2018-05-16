@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-
+using Microsoft.Xna.Framework.Input;
 
 namespace Pool
 {
@@ -33,16 +33,20 @@ namespace Pool
         int powerupInterval; // when it resets, this value changes randomly
         int powerupTimerMax;
         int powerupTimerMin;
+        int viberation_timer;
+       
+       
 
         public Board(int numPlayers, IServiceProvider aServiceProvider)
         {
+            viberation_timer = 0;
             serviceProvider = aServiceProvider;
             content = new ContentManager(serviceProvider, "Content");//initializing the content manager
             Ball.defaultTexture = content.Load<Texture2D>("ball");// loading the ball sprite
             Player.SetCueStickTexture(content.Load<Texture2D>("cueStick"));
 
             players = new Player[numPlayers];
-            state = GameState.Play; // set this dynamically later
+            state = GameState.MainMenu; // set this dynamically later
             zones = new List<Zone>();
             balls = new List<Ball>();
 
@@ -69,7 +73,7 @@ namespace Pool
             powerupTimerMax = 360; // 6 seconds
             powerupTimerMin = 180; // 3 seconds
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
-
+          
             gui = new GUI(serviceProvider, this);
         }
 
@@ -177,6 +181,7 @@ namespace Pool
                 powerupTimer = (powerupTimer + 1) % (powerupInterval + 1);
                 if (powerupTimer == powerupInterval)
                     CreatePowerup();
+               
             }
             else if (state == GameState.GameOver)
             {
@@ -194,8 +199,22 @@ namespace Pool
                 foreach (Player p in players)
                     p.Update(gameTime);
             }
-
+            else if (state == GameState.MainMenu)
+            {
+                foreach (Player p in players)
+                    p.Update(gameTime);
+            }
+            viberation_timer = (viberation_timer + 1) % 61;
+            if (viberation_timer == 60)
+            {
+                foreach (Player p in players)
+                {
+                    GamePad.SetVibration(p.playerIndex, 0f, 0f);
+                }
+            }
             gui.Update(gameTime);
+           
+
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -242,7 +261,7 @@ namespace Pool
             bool tie = false;
             for (int i = 1; i < numBallsInZone.Length; i++)
             {
-                if (numBallsInZone[i] == numBallsInZone[maxIndex])
+                if (numBallsInZone[i] == numBallsInZone[maxIndex] )
                 {
                     tie = true;
                 }
@@ -331,6 +350,12 @@ namespace Pool
 
             return false;
         }
-        
+        public static void vibrate(Player player, float index)
+        {
+            
+            GamePad.SetVibration(player.playerIndex, index, index);
+           
+            
+        }
     }
 }

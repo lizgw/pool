@@ -35,13 +35,18 @@ namespace Pool
         float aimingFriction = .7f;
         float nonaimingFriction = .07f;
 
+       
         Board board;
 
         Powerup currentPowerup;
 
+       public  GamePadState gamePad ;
+        
         public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
 
         {
+          
+
             color = aColor;
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
@@ -70,7 +75,8 @@ namespace Pool
         public void Update(GameTime gameTime)
         {
             HandleInput();
-            base.Update(gameTime);          
+
+                  base.Update(gameTime);          
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -112,7 +118,8 @@ namespace Pool
 
         private void HandleInput()
         {
-            GamePadState gamePad = GamePad.GetState(playerIndex);
+            GamePadState gamePad =  GamePad.GetState(playerIndex);
+           
 
             // basic movement
             HandleMovement(gamePad.ThumbSticks.Left);
@@ -163,6 +170,15 @@ namespace Pool
                 {
                    // board.state = GameState.Play;
                     Console.WriteLine("switched");
+                }
+            }
+            if (board.state == GameState.MainMenu && playerIndex==PlayerIndex.One)
+            {
+                if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//play game
+                {
+                    board.state = GameState.Play;
+                    Console.WriteLine("playing");
                 }
             }
             oldGamePad = gamePad;
@@ -255,6 +271,9 @@ namespace Pool
             else
                 return false;
         }
-
+        public void vibrate()
+        {
+            GamePad.SetVibration(PlayerIndex.One, 1.0f, 1.0f);
+        }
     }
 }

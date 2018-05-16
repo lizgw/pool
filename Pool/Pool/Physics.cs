@@ -21,7 +21,7 @@ namespace Pool
                 {
                     Ball ball1 = balls[b1];
                     Ball ball2 = balls[b2];
-                    if (TryCollide(ball1, ball2))
+                    if (TryCollide(ball1, ball2) )
                     {
                         // check if the collision is between a player & a powerup
                         Ball[] collisionBalls = PlayerPowerupCollision(ball1, ball2);
@@ -30,7 +30,9 @@ namespace Pool
                         {
                             ((Player)collisionBalls[0]).CollectPowerup((Powerup)collisionBalls[1]);
                         }
-                        SetNewVelocities(ball1, ball2);
+                        
+                       
+                            SetNewVelocities(ball1, ball2);
                     }
                 }
             }
@@ -156,6 +158,12 @@ namespace Pool
 
             ball1.SetVelocity(newV1);
             ball2.SetVelocity(newV2);
+            if (ball1.GetType() == typeof(Player))
+            {
+                Board.vibrate((Player)ball1, 1.0f);
+            }
+            else if (ball2.GetType() == typeof(Player))
+                Board.vibrate((Player)ball2,1.0f);
         }
 
         public static double DotProduct(Vector2 vect1, Vector2 vect2)
