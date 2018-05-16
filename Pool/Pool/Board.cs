@@ -123,7 +123,7 @@ namespace Pool
             // reset the timer
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
         }
-        
+
         private void CreatePlayers()
         {
             for (int i = 0; i < players.Length; i++)
