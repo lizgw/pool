@@ -151,8 +151,8 @@ namespace Pool
 
             double optimizedP = (2.0 * (a1 - a2)) / (ball1.GetMass() + ball2.GetMass());
 
-            Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball1.GetMass());
-            Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball2.GetMass());
+            Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball2.GetMass());
+            Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball1.GetMass());
 
             ball1.SetVelocity(newV1);
             ball2.SetVelocity(newV2);

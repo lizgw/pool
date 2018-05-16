@@ -134,7 +134,8 @@ namespace Pool
             {
                 case PowerupType.BigBall:
                     // increase radius
-                    ChangeRadiusOverTime(40);
+                    ChangeRadiusOverTime(defaultRadius * 2);
+                    SetMass(1000);
                     break;
                 case PowerupType.Bomb:
                     break;
@@ -151,7 +152,8 @@ namespace Pool
             {
                 case PowerupType.BigBall:
                     // reset radius
-                    SetRadius(20);
+                    SetRadius(defaultRadius);
+                    SetMass(5);
                     break;
                 case PowerupType.Bomb:
                     break;
