@@ -49,6 +49,10 @@ namespace Pool
                     Vector2 newVel = ball.GetVelocity();
                     newVel.X *= -1;
                     ball.SetVelocity(newVel);
+                    if (ball.GetType() == typeof(Player))
+                    {
+                        Board.vibrate((Player)ball, (float)(DotProduct(ball.GetVelocity(), newVel)));
+                    }
                 }
                 if ((ball.GetPos().Y - ball.GetRadius() <= tableBounds.Top && ball.GetVelocity().Y < 0) ||
                     (ball.GetPos().Y + ball.GetRadius() >= tableBounds.Bottom && ball.GetVelocity().Y > 0))
@@ -56,10 +60,15 @@ namespace Pool
                     Vector2 newVel = ball.GetVelocity();
                     newVel.Y *= -1;
                     ball.SetVelocity(newVel);
+                    if (ball.GetType() == typeof(Player))
+                    {
+                        Board.vibrate((Player)ball, (float)(DotProduct(ball.GetVelocity(), newVel)));
+                    }
                 }
+                
 
                 //friction
-                
+
                 double frictionAccel = ball.GetFriction() * boardFriction;
                 double ballSpeed = ball.GetVelocity().Length();
                 if (frictionAccel < ballSpeed)
@@ -156,14 +165,16 @@ namespace Pool
             Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball2.GetMass());
             Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball1.GetMass());
 
-            ball1.SetVelocity(newV1);
-            ball2.SetVelocity(newV2);
             if (ball1.GetType() == typeof(Player))
             {
-                Board.vibrate((Player)ball1, 1.0f);
+                Board.vibrate((Player)ball1, (float)(DotProduct(ball1.GetVelocity(), newV1)));
             }
             else if (ball2.GetType() == typeof(Player))
-                Board.vibrate((Player)ball2,1.0f);
+                Board.vibrate((Player)ball2, (float)(DotProduct(ball2.GetVelocity(), newV2)));
+
+            ball1.SetVelocity(newV1);
+            ball2.SetVelocity(newV2);
+           
         }
 
         public static double DotProduct(Vector2 vect1, Vector2 vect2)
