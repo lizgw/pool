@@ -121,6 +121,9 @@ namespace Pool
                     DrawPlayGUI(spriteBatch); // draw game overlay under it
                     DrawGameOverGUI(spriteBatch);
                     break;
+                case GameState.MainMenu:
+                    DrawMainMenu(spriteBatch);
+                    break;
             }
         }
 
@@ -178,6 +181,18 @@ namespace Pool
             // Play again text
             string againText = "Press X on any controller to play again";
             spriteBatch.DrawString(font, againText, new Vector2(100, 300), Color.White);
+        }
+        private void DrawMainMenu(SpriteBatch spriteBatch)
+        {
+            //background
+            spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.Green);
+
+            //title---game name
+            spriteBatch.DrawString(font,"Game name", new Vector2(Game1.screenWidth/2-75,50), Color.Yellow,0f,new Vector2(0,0),1,SpriteEffects.None,0.0f);
+
+            //main menu options
+            spriteBatch.DrawString(font, "Play game:B", new Vector2((Game1.screenWidth/2)-75,250), Color.Red);
+            
         }
     }
 }
