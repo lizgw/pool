@@ -232,28 +232,6 @@ namespace Pool
             {
                 cancelingShot = true;
             }
-
-            if (board.state == GameState.Pause)//pause menu controls
-            {
-                if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
-                    !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))//resume
-                {
-                    board.state = GameState.Play;
-                }
-
-                if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
-                    !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//restart
-                {
-                    board.RestartGame();
-                }
-
-                if (gamePad.Buttons.X.Equals(ButtonState.Pressed) &&
-                    !oldGamePad.Buttons.X.Equals(ButtonState.Pressed))//main menu
-                {
-                    board.RestartGame();
-                    board.state = GameState.MainMenu;
-                }
-            }
             if (board.state == GameState.MainMenu && playerIndex==PlayerIndex.One)
             {
                 if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
@@ -263,6 +241,30 @@ namespace Pool
                 }
             }
             oldGamePad = gamePad;
+        }
+
+        public void HandlePauseMenuControls()
+        {
+            GamePadState gamePad = GamePad.GetState(playerIndex);
+
+            if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
+                    !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))//resume
+            {
+                board.state = GameState.Play;
+            }
+
+            if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//restart
+            {
+                board.RestartGame();
+            }
+
+            if (gamePad.Buttons.X.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.X.Equals(ButtonState.Pressed))//main menu
+            {
+                board.RestartGame();
+                board.state = GameState.MainMenu;
+            }
         }
 
         private void HandleMovement(Vector2 aThumbstick)

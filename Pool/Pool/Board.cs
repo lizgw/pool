@@ -33,7 +33,7 @@ namespace Pool
         int powerupInterval; // when it resets, this value changes randomly
         int powerupTimerMax;
         int powerupTimerMin;
-        int viberation_timer;
+        int vibration_timer;
 
         int maxPowerups;
 
@@ -41,7 +41,7 @@ namespace Pool
 
         public Board(int numPlayers, IServiceProvider aServiceProvider)
         {
-            viberation_timer = 0;
+            vibration_timer = 0;
             serviceProvider = aServiceProvider;
             content = new ContentManager(serviceProvider, "Content");//initializing the content manager
             Ball.defaultTexture = content.Load<Texture2D>("ball");// loading the ball sprite
@@ -204,15 +204,15 @@ namespace Pool
             else if (state == GameState.Pause)
             {
                 foreach (Player p in players)
-                    p.Update(gameTime);
+                    p.HandlePauseMenuControls();
             }
             else if (state == GameState.MainMenu)
             {
                 foreach (Player p in players)
                     p.Update(gameTime);
             }
-            viberation_timer = (viberation_timer + 1) % 61;
-            if (viberation_timer == 60)
+            vibration_timer = (vibration_timer + 1) % 61;
+            if (vibration_timer == 60)
             {
                 foreach (Player p in players)
                 {
@@ -361,10 +361,9 @@ namespace Pool
             return false;
         }
 
-        public static void vibrate(Player player, float index)
+        public static void Vibrate(Player player, float index)
         {
             GamePad.SetVibration(player.playerIndex, index, index);
         }
-
     }
 }

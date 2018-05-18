@@ -10,6 +10,8 @@ namespace Pool
 {
     static class Physics
    {
+        private static float vibrationMultiplier = .2f;
+        
         //It's possible that we'll want the balls to bounce off of more things than
         //other balls and a single rectangle, but we can look into doing that later.
         public static void Update(List<Ball> balls, Rectangle tableBounds, double boardFriction)
@@ -51,7 +53,7 @@ namespace Pool
                     ball.SetVelocity(newVel);
                     if (ball.GetType() == typeof(Player))
                     {
-                        Board.vibrate((Player)ball, (float)(DotProduct(ball.GetVelocity(), newVel)));
+                        Board.Vibrate((Player)ball, .5f);
                     }
                 }
                 if ((ball.GetPos().Y - ball.GetRadius() <= tableBounds.Top && ball.GetVelocity().Y < 0) ||
@@ -62,7 +64,7 @@ namespace Pool
                     ball.SetVelocity(newVel);
                     if (ball.GetType() == typeof(Player))
                     {
-                        Board.vibrate((Player)ball, (float)(DotProduct(ball.GetVelocity(), newVel)));
+                        Board.Vibrate((Player)ball, .5f);
                     }
                 }
                 
@@ -164,10 +166,14 @@ namespace Pool
 
             if (ball1.GetType() == typeof(Player))
             {
-                Board.vibrate((Player)ball1, (float)(DotProduct(ball1.GetVelocity(), newV1)));
+                Board.Vibrate((Player)ball1, (float)(Math.Abs(optimizedP * ball2.GetMass() * vibrationMultiplier)));
+                //Console.WriteLine("Vibration:" + Math.Abs(optimizedP * ball2.GetMass() * vibrationMultiplier));
             }
-            else if (ball2.GetType() == typeof(Player))
-                Board.vibrate((Player)ball2, (float)(DotProduct(ball2.GetVelocity(), newV2)));
+            if (ball2.GetType() == typeof(Player))
+            {
+                Board.Vibrate((Player)ball2, (float)(Math.Abs(optimizedP * ball1.GetMass() * vibrationMultiplier)));
+                //Console.WriteLine("Vibration: " + Math.Abs(optimizedP * ball1.GetMass() * vibrationMultiplier));
+            }
 
             ball1.SetVelocity(newV1);
             ball2.SetVelocity(newV2);
