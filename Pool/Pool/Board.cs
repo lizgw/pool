@@ -177,7 +177,7 @@ namespace Pool
 
                 // create powerups
                 powerupTimer = (powerupTimer + 1) % (powerupInterval + 1);
-                if (powerupTimer == powerupInterval && Powerup.count < 8)
+                if (powerupTimer == powerupInterval && Powerup.count < 1)
                     CreatePowerup();
                
             }
