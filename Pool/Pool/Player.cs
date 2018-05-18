@@ -273,8 +273,6 @@ namespace Pool
             wasZero = isZero;
             isZero = thumbstick.LengthSquared() <= 0;
 
-            Console.WriteLine(cancelingShot);
-
             if (cancelingShot)
             {
                 SetFriction(nonaimingFriction);
