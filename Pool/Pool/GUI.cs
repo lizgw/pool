@@ -165,8 +165,6 @@ namespace Pool
             spriteBatch.DrawString(font, "Restart: 'B'", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) ), Color.Red);
             spriteBatch.DrawString(font, "Main Menu: 'X'", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) +50), Color.Blue);
             // spriteBatch.DrawString(font, "Restart", new Vector2((Game1.screenWidth / 2) - 32, (Game1.screenHeight / 2) - 10), Color.White);
-           
-
         }
 
         private void DrawGameOverGUI(SpriteBatch spriteBatch)
@@ -190,9 +188,16 @@ namespace Pool
             //title---game name
             spriteBatch.DrawString(font,"Game name", new Vector2(Game1.screenWidth/2-75,50), Color.Yellow,0f,new Vector2(0,0),1,SpriteEffects.None,0.0f);
 
+            // game details
+            string details = "Use the left stick to aim and fire.\n" +
+                "Press A to use your powerup.\n" +
+                "Press B to cancel your shot.\n" +
+                "Press Start to pause the game.\n\n" +
+                "The goal is to get the most\nballs on your side of the screen!";
+            spriteBatch.DrawString(font, details, new Vector2(50, 300), Color.White);
+
             //main menu options
-            spriteBatch.DrawString(font, "Play game:B", new Vector2((Game1.screenWidth/2)-75,250), Color.Red);
-            
+            spriteBatch.DrawString(font, "B - Play", new Vector2((Game1.screenWidth/2)-75,200), Color.Red);
         }
     }
 }
