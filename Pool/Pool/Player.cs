@@ -230,6 +230,20 @@ namespace Pool
                 {
                     board.state = GameState.Play;
                 }
+                if (gamePad.Buttons.X.Equals(ButtonState.Pressed) &&
+               !oldGamePad.Buttons.X.Equals(ButtonState.Pressed))//play game
+                {
+                    board.state = GameState.instructions;
+                }
+            }
+            if (board.state == GameState.instructions && playerIndex == PlayerIndex.One)
+            {
+                if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//play game
+                {
+                    board.state = GameState.MainMenu;
+                }
+                
             }
             oldGamePad = gamePad;
         }

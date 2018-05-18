@@ -124,6 +124,9 @@ namespace Pool
                 case GameState.MainMenu:
                     DrawMainMenu(spriteBatch);
                     break;
+                case GameState.instructions:
+                    DrawInstructionsGUI(spriteBatch);
+                    break;
             }
         }
 
@@ -166,7 +169,19 @@ namespace Pool
             spriteBatch.DrawString(font, "X: Quit to Main Menu", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) +50), Color.Blue);
             // spriteBatch.DrawString(font, "Restart", new Vector2((Game1.screenWidth / 2) - 32, (Game1.screenHeight / 2) - 10), Color.White);
         }
-
+        private void DrawInstructionsGUI(SpriteBatch spriteBatch)
+        {
+             //background
+            spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.Green);
+            // game details
+            string details = "Use the left stick to aim and fire.\n" +
+                "Press A to use your powerup.\n" +
+                "Press B to cancel your shot.\n" +
+                "Press Start to pause the game.\n\n" +
+                "The goal is to get the most\nballs on your side of the screen!\n"+
+                "Press B to return to the Main Menu";
+            spriteBatch.DrawString(font, details, new Vector2(50, 150), Color.White);
+        }
         private void DrawGameOverGUI(SpriteBatch spriteBatch)
         {
             // semi-transparent background
@@ -188,16 +203,11 @@ namespace Pool
             //title---game name
             spriteBatch.DrawString(font,"Game name", new Vector2(Game1.screenWidth/2-75,50), Color.Yellow,0f,new Vector2(0,0),1,SpriteEffects.None,0.0f);
 
-            // game details
-            string details = "Use the left stick to aim and fire.\n" +
-                "Press A to use your powerup.\n" +
-                "Press B to cancel your shot.\n" +
-                "Press Start to pause the game.\n\n" +
-                "The goal is to get the most\nballs on your side of the screen!";
-            spriteBatch.DrawString(font, details, new Vector2(50, 300), Color.White);
+            
 
             //main menu options
             spriteBatch.DrawString(font, "B - Play New Game", new Vector2((Game1.screenWidth/2)-150,200), Color.Red);
+            spriteBatch.DrawString(font, "X - Instructions", new Vector2((Game1.screenWidth / 2) - 150, 250), Color.Blue);
         }
     }
 }

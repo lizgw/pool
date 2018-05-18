@@ -16,7 +16,8 @@ namespace Pool
         MainMenu,
         Play,
         Pause,
-        GameOver
+        GameOver,
+        instructions
     };
     /// <summary>
     /// This is the main type for your game
