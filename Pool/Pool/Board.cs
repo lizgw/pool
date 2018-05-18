@@ -204,7 +204,7 @@ namespace Pool
             else if (state == GameState.Pause)
             {
                 foreach (Player p in players)
-                    p.Update(gameTime);
+                    p.HandlePauseMenuControls();
             }
             else if (state == GameState.MainMenu)
             {
