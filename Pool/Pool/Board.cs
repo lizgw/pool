@@ -250,7 +250,7 @@ namespace Pool
                 Ball b = balls[i];
 
                 // if it's not a player (just a normal ball)
-                if (b.GetType() != typeof(Player))
+                if (b.GetType() != typeof(Player) && b.GetType() != typeof(Powerup))
                 {
                     // find which zone it's in
                     int indexOfZone = FindZone(b);
@@ -293,7 +293,7 @@ namespace Pool
                     return i;
             }
 
-            // this shouldn't happen - each ball should be in a zone
+            // the ball isn't in a zone
             return -1;
         }
 
@@ -364,10 +364,7 @@ namespace Pool
 
         public static void vibrate(Player player, float index)
         {
-            
             GamePad.SetVibration(player.playerIndex, index, index);
-           
-            
         }
 
     }
