@@ -34,8 +34,10 @@ namespace Pool
         int powerupTimerMax;
         int powerupTimerMin;
         int viberation_timer;
-       
-       
+
+        int maxPowerups;
+
+        int pbWidth;
 
         public Board(int numPlayers, IServiceProvider aServiceProvider)
         {
@@ -70,6 +72,7 @@ namespace Pool
             powerupTimerMax = 720;
             powerupTimerMin = 360;
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
+            maxPowerups = 1;
           
             gui = new GUI(serviceProvider, this);
         }
@@ -121,8 +124,16 @@ namespace Pool
                 foundPos = !PowerupIntersection(p);
             } while (!foundPos);
 
+            // give it a random velocity
+            Vector2 randVelocity = new Vector2();
+            int randReverseX = rnd.Next(2) < 1 ? -1 : 1; // randomly 1 or -1
+            int randReverseY = rnd.Next(2) < 1 ? -1 : 1;
+            randVelocity.X = rnd.Next(6) * randReverseX;
+            randVelocity.Y = rnd.Next(6) * randReverseY;
+            p.SetVelocity(randVelocity);
+
             // add it to the list
-            balls.Add(p);
+            balls.Add(p);            
 
             // reset the timer
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
@@ -175,7 +186,7 @@ namespace Pool
 
                 // create powerups
                 powerupTimer = (powerupTimer + 1) % (powerupInterval + 1);
-                if (powerupTimer == powerupInterval && Powerup.count < 8)
+                if (powerupTimer == powerupInterval && Powerup.count < maxPowerups)
                     CreatePowerup();
                
             }
@@ -209,8 +220,6 @@ namespace Pool
                 }
             }
             gui.Update(gameTime);
-           
-
         }
 
         public void Draw(SpriteBatch spriteBatch)
