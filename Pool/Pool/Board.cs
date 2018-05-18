@@ -34,6 +34,8 @@ namespace Pool
         int powerupTimerMax;
         int powerupTimerMin;
 
+        int pbWidth;
+
         public Board(int numPlayers, IServiceProvider aServiceProvider)
         {
             serviceProvider = aServiceProvider;
