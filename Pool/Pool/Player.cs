@@ -128,6 +128,15 @@ namespace Pool
             board.RemovePowerup(p);
         }
 
+        public float GetPowerupPercentDone()
+        {
+            // only applies to the increased power powerup
+            if (powerupType == PowerupType.IncreasePower || powerupType == PowerupType.BigBall)
+                return (float)powerupEffectTimer / (float)powerupEffectTimerLimit;
+            else
+                return 0;
+        }
+
         private void ApplyPowerupEffects()
         {
             // apply effects

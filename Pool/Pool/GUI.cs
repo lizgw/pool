@@ -40,6 +40,7 @@ namespace Pool
         int boxWidth;
         int boxHeight;
         int boxOffset;
+        int powerupBarHeight;
         // old power bar width
         public int pbWidth;
 
@@ -66,6 +67,7 @@ namespace Pool
             boxWidth = sbHeight;
             boxHeight = boxWidth;
             boxOffset = 5;
+            powerupBarHeight = 10;
 
             pbWidth = 25;
 
@@ -151,6 +153,13 @@ namespace Pool
                     Vector2 origin = new Vector2(boxSize, boxSize);
                     spriteBatch.Draw(ballTexture, position, null, c, 0, origin, scale, SpriteEffects.None, 0);
                 }
+
+                // powerup timer bars
+                float percentDone = board.players[i].GetPowerupPercentDone();
+                if (percentDone == 0) // when no powerup, don't draw it
+                    percentDone = 1;
+                Rectangle barRect = new Rectangle(powerupBoxes[i].X, powerupBoxes[i].Bottom - powerupBarHeight, (int)(powerupBoxes[i].Width * (1 - percentDone)), powerupBarHeight);
+                spriteBatch.Draw(barTexture, barRect, Color.White);
             }
         }
 
