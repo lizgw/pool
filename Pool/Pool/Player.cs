@@ -47,10 +47,7 @@ namespace Pool
        public  GamePadState gamePad ;
         
         public Player(Color aColor, PlayerIndex aPlayerIndex, Board aBoard) : base()
-
         {
-          
-
             color = aColor;
             playerIndex = aPlayerIndex;
             oldGamePad = GamePad.GetState(playerIndex);
@@ -86,7 +83,6 @@ namespace Pool
         public void Update(GameTime gameTime)
         {
             HandleInput();
-
 
             if (usingPowerup)
             {
@@ -200,7 +196,6 @@ namespace Pool
         {
             GamePadState gamePad =  GamePad.GetState(playerIndex);
            
-
             // basic movement
             HandleMovement(gamePad.ThumbSticks.Left);
 
@@ -228,6 +223,7 @@ namespace Pool
             {
                 Console.WriteLine("Cancel shot");
             }
+
             if (board.state == GameState.Pause)//pause menu controlls
             {
                 if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
