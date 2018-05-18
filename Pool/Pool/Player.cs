@@ -32,6 +32,8 @@ namespace Pool
         bool isZero = true;
         bool wasZero = true;
 
+        bool cancelingShot = false;
+
         float aimingFriction = .7f;
         float nonaimingFriction = .07f;
 
@@ -105,7 +107,7 @@ namespace Pool
         new public void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            if (!isZero)
+            if (!isZero && !cancelingShot)
                 DrawCueStick(spriteBatch);
         }
 
@@ -221,7 +223,7 @@ namespace Pool
             if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
                 !oldGamePad.Buttons.B.Equals(ButtonState.Pressed) && board.state==GameState.Play)
             {
-                Console.WriteLine("Cancel shot");
+                cancelingShot = true;
             }
 
             if (board.state == GameState.Pause)//pause menu controlls
@@ -271,8 +273,18 @@ namespace Pool
             wasZero = isZero;
             isZero = thumbstick.LengthSquared() <= 0;
 
+            Console.WriteLine(cancelingShot);
+
+            if (cancelingShot)
+            {
+                SetFriction(nonaimingFriction);
+                power = 0;
+            }
+
             if (isZero)
             {
+                cancelingShot = false;
+
                 SetFriction(nonaimingFriction);
 
                 if (!wasZero)
@@ -281,7 +293,7 @@ namespace Pool
                     power = 0;
                 }
             }
-            else 
+            else if (!cancelingShot)
             {
                 SetFriction(aimingFriction);
 
