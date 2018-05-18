@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-
+using Microsoft.Xna.Framework.Input;
 
 namespace Pool
 {
@@ -33,16 +33,22 @@ namespace Pool
         int powerupInterval; // when it resets, this value changes randomly
         int powerupTimerMax;
         int powerupTimerMin;
+        int viberation_timer;
+
+        int maxPowerups;
+
+        int pbWidth;
 
         public Board(int numPlayers, IServiceProvider aServiceProvider)
         {
+            viberation_timer = 0;
             serviceProvider = aServiceProvider;
             content = new ContentManager(serviceProvider, "Content");//initializing the content manager
             Ball.defaultTexture = content.Load<Texture2D>("ball");// loading the ball sprite
             Player.SetCueStickTexture(content.Load<Texture2D>("cueStick"));
 
             players = new Player[numPlayers];
-            state = GameState.Play; // set this dynamically later
+            state = GameState.MainMenu; // set this dynamically later
             zones = new List<Zone>();
             balls = new List<Ball>();
 
@@ -66,7 +72,8 @@ namespace Pool
             powerupTimerMax = 720;
             powerupTimerMin = 360;
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
-
+            maxPowerups = 1;
+          
             gui = new GUI(serviceProvider, this);
         }
 
@@ -117,8 +124,16 @@ namespace Pool
                 foundPos = !PowerupIntersection(p);
             } while (!foundPos);
 
+            // give it a random velocity
+            Vector2 randVelocity = new Vector2();
+            int randReverseX = rnd.Next(2) < 1 ? -1 : 1; // randomly 1 or -1
+            int randReverseY = rnd.Next(2) < 1 ? -1 : 1;
+            randVelocity.X = rnd.Next(6) * randReverseX;
+            randVelocity.Y = rnd.Next(6) * randReverseY;
+            p.SetVelocity(randVelocity);
+
             // add it to the list
-            balls.Add(p);
+            balls.Add(p);            
 
             // reset the timer
             powerupInterval = rnd.Next(powerupTimerMin, powerupTimerMax + 1);
@@ -132,11 +147,11 @@ namespace Pool
                 {
                     case 0:
                         players[i] = new Player(GUI.playerColors[0], PlayerIndex.One, this);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
+                        zones.Add(new Zone(serviceProvider, new Rectangle(0, 0, Game1.screenWidth / 2-100, Game1.screenHeight), players[i]));
                         break;
                     case 1:
                         players[i] = new Player(GUI.playerColors[1], PlayerIndex.Two, this);
-                        zones.Add(new Zone(serviceProvider, new Rectangle(Game1.screenWidth / 2, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
+                        zones.Add(new Zone(serviceProvider, new Rectangle(Game1.screenWidth / 2+100, 0, Game1.screenWidth / 2, Game1.screenHeight), players[i]));
                         break;
                     case 2:
                         players[i] = new Player(GUI.playerColors[2], PlayerIndex.Three, this);
@@ -171,8 +186,9 @@ namespace Pool
 
                 // create powerups
                 powerupTimer = (powerupTimer + 1) % (powerupInterval + 1);
-                if (powerupTimer == powerupInterval && Powerup.count < 8)
+                if (powerupTimer == powerupInterval && Powerup.count < maxPowerups)
                     CreatePowerup();
+               
             }
             else if (state == GameState.GameOver)
             {
@@ -190,7 +206,19 @@ namespace Pool
                 foreach (Player p in players)
                     p.Update(gameTime);
             }
-
+            else if (state == GameState.MainMenu)
+            {
+                foreach (Player p in players)
+                    p.Update(gameTime);
+            }
+            viberation_timer = (viberation_timer + 1) % 61;
+            if (viberation_timer == 60)
+            {
+                foreach (Player p in players)
+                {
+                    GamePad.SetVibration(p.playerIndex, 0f, 0f);
+                }
+            }
             gui.Update(gameTime);
         }
 
@@ -222,7 +250,7 @@ namespace Pool
                 Ball b = balls[i];
 
                 // if it's not a player (just a normal ball)
-                if (b.GetType() != typeof(Player))
+                if (b.GetType() != typeof(Player) && b.GetType() != typeof(Powerup))
                 {
                     // find which zone it's in
                     int indexOfZone = FindZone(b);
@@ -238,7 +266,7 @@ namespace Pool
             bool tie = false;
             for (int i = 1; i < numBallsInZone.Length; i++)
             {
-                if (numBallsInZone[i] == numBallsInZone[maxIndex])
+                if (numBallsInZone[i] == numBallsInZone[maxIndex] )
                 {
                     tie = true;
                 }
@@ -265,7 +293,7 @@ namespace Pool
                     return i;
             }
 
-            // this shouldn't happen - each ball should be in a zone
+            // the ball isn't in a zone
             return -1;
         }
 
@@ -333,5 +361,11 @@ namespace Pool
 
             return false;
         }
+
+        public static void vibrate(Player player, float index)
+        {
+            GamePad.SetVibration(player.playerIndex, index, index);
+        }
+
     }
 }

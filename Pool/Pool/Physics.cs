@@ -21,7 +21,7 @@ namespace Pool
                 {
                     Ball ball1 = balls[b1];
                     Ball ball2 = balls[b2];
-                    if (TryCollide(ball1, ball2))
+                    if (TryCollide(ball1, ball2) )
                     {
                         // check if the collision is between a player & a powerup
                         Ball[] collisionBalls = PlayerPowerupCollision(ball1, ball2);
@@ -30,8 +30,9 @@ namespace Pool
                         {
                             ((Player)collisionBalls[0]).CollectPowerup((Powerup)collisionBalls[1]);
                         }
+
                         else
-                            SetNewVelocities(ball1, ball2);
+                             SetNewVelocities(ball1, ball2);
                     }
                 }
             }
@@ -48,6 +49,10 @@ namespace Pool
                     Vector2 newVel = ball.GetVelocity();
                     newVel.X *= -1;
                     ball.SetVelocity(newVel);
+                    if (ball.GetType() == typeof(Player))
+                    {
+                        Board.vibrate((Player)ball, (float)(DotProduct(ball.GetVelocity(), newVel)));
+                    }
                 }
                 if ((ball.GetPos().Y - ball.GetRadius() <= tableBounds.Top && ball.GetVelocity().Y < 0) ||
                     (ball.GetPos().Y + ball.GetRadius() >= tableBounds.Bottom && ball.GetVelocity().Y > 0))
@@ -55,10 +60,15 @@ namespace Pool
                     Vector2 newVel = ball.GetVelocity();
                     newVel.Y *= -1;
                     ball.SetVelocity(newVel);
+                    if (ball.GetType() == typeof(Player))
+                    {
+                        Board.vibrate((Player)ball, (float)(DotProduct(ball.GetVelocity(), newVel)));
+                    }
                 }
+                
 
                 //friction
-                
+
                 double frictionAccel = ball.GetFriction() * boardFriction;
                 double ballSpeed = ball.GetVelocity().Length();
                 if (frictionAccel < ballSpeed)
@@ -155,8 +165,16 @@ namespace Pool
             Vector2 newV1 = ball1.GetVelocity() - ScalarProduct(n, optimizedP * ball2.GetMass());
             Vector2 newV2 = ball2.GetVelocity() + ScalarProduct(n, optimizedP * ball1.GetMass());
 
+            if (ball1.GetType() == typeof(Player))
+            {
+                Board.vibrate((Player)ball1, (float)(DotProduct(ball1.GetVelocity(), newV1)));
+            }
+            else if (ball2.GetType() == typeof(Player))
+                Board.vibrate((Player)ball2, (float)(DotProduct(ball2.GetVelocity(), newV2)));
+
             ball1.SetVelocity(newV1);
             ball2.SetVelocity(newV2);
+           
         }
 
         public static double DotProduct(Vector2 vect1, Vector2 vect2)

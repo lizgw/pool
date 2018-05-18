@@ -36,19 +36,12 @@ namespace Pool
         int sbWidth;
         public int sbHeight;
         int stPadding;
-        // power bars
-        public int pbWidth;
-        int pbHeight;
-        int pbTopOffset;
-        // power bar fill
-        int fillOffset;
-        int fillWidth;
-        int fillHeight;
-        int fillTopOffset;
         // powerup box background
         int boxWidth;
         int boxHeight;
         int boxOffset;
+        // old power bar width
+        public int pbWidth;
 
         public GUI(IServiceProvider serviceProvider, Board aBoard)
         {
@@ -69,21 +62,12 @@ namespace Pool
             sbHeight = 50;
             stPadding = sbPadding + 50;
 
-            // power bars
-            pbWidth = 25;
-            pbHeight = 250;
-            pbTopOffset = 125;
-
-            // power bar fill
-            fillOffset = 4;
-            fillWidth = pbWidth - (fillOffset * 2);
-            fillHeight = pbHeight - (fillOffset * 2);
-            fillTopOffset = pbTopOffset + fillOffset;
-
             // powerup box background
             boxWidth = sbHeight;
             boxHeight = boxWidth;
             boxOffset = 5;
+
+            pbWidth = 25;
 
             // create lists of GUI elements for each player
             scoreBoxes = new List<Rectangle>(numPlayers);
@@ -101,15 +85,8 @@ namespace Pool
                 // player score text
                 scoreTexts.Add("" + board.players[playerNum].GetPoints());
 
-                // background of power bar
-                int xPos = (playerNum % 2) * (Game1.screenWidth - pbWidth); // either left side or right side depending on the playerNum
-                powerBarBackgrounds.Add(new Rectangle(xPos, pbTopOffset, pbWidth, pbHeight));
-
-                // fill of power bar
-                powerBars.Add(new Rectangle(xPos + fillOffset, fillTopOffset, fillWidth, fillHeight));
-
                 // power up box - should be either right/left of the player's score box
-                xPos = rectX;
+                int xPos = rectX;
                 if (playerNum % 2 == 1) // player 1 & 3, goes on the left of the box
                     xPos -= (boxWidth + boxOffset);
                 else // player 2 & 4, goes on the right of the box
@@ -144,6 +121,9 @@ namespace Pool
                     DrawPlayGUI(spriteBatch); // draw game overlay under it
                     DrawGameOverGUI(spriteBatch);
                     break;
+                case GameState.MainMenu:
+                    DrawMainMenu(spriteBatch);
+                    break;
             }
         }
 
@@ -154,10 +134,6 @@ namespace Pool
                 // score
                 spriteBatch.Draw(barTexture, scoreBoxes[i], playerColors[i]);
                 spriteBatch.DrawString(font, scoreTexts[i], new Vector2(stPadding + (i * (sbWidth + sbMidPadding)), 0), Color.White);
-
-                // power bars
-                spriteBatch.Draw(barTexture, powerBarBackgrounds[i], playerColors[i] * 0.25f);
-                spriteBatch.Draw(barTexture, powerBars[i], playerColors[i]);
 
                 // power up boxes
                 spriteBatch.Draw(barTexture, powerupBoxes[i], playerColors[i]);
@@ -205,6 +181,18 @@ namespace Pool
             // Play again text
             string againText = "Press X on any controller to play again";
             spriteBatch.DrawString(font, againText, new Vector2(100, 300), Color.White);
+        }
+        private void DrawMainMenu(SpriteBatch spriteBatch)
+        {
+            //background
+            spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.Green);
+
+            //title---game name
+            spriteBatch.DrawString(font,"Game name", new Vector2(Game1.screenWidth/2-75,50), Color.Yellow,0f,new Vector2(0,0),1,SpriteEffects.None,0.0f);
+
+            //main menu options
+            spriteBatch.DrawString(font, "Play game:B", new Vector2((Game1.screenWidth/2)-75,250), Color.Red);
+            
         }
     }
 }
