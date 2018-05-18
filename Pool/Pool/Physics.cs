@@ -94,16 +94,13 @@ namespace Pool
             {
                 arr[0] = ball1;
                 arr[1] = ball2;
-                //Console.WriteLine("PP Collision");
             }
             else if (ball2.GetType() == typeof(Player) && ball1.GetType() == typeof(Powerup))
             {
                 arr[0] = ball2;
                 arr[1] = ball1;
-                //Console.WriteLine("PP Collision");
             }
-
-            //Console.WriteLine("Normal Collision");
+            
             return arr;
         }
 

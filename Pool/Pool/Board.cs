@@ -314,7 +314,6 @@ namespace Pool
             if (wonGame)
             {
                 // do some game over thing
-                Console.WriteLine("Game over! Player " + (index + 1) + " won!");
                 winningPlayer = index;
                 state = GameState.GameOver;
             }
