@@ -90,7 +90,6 @@ namespace Pool
             {
                 // update countdown timer - TODO: use gameTime so it's more stable(?)
                 powerupEffectTimer = (powerupEffectTimer + 1) % (powerupEffectTimerLimit + 1);
-                //Console.WriteLine("time: " + powerupEffectTimer + " / " + powerupEffectTimerLimit);
 
                 if (powerupType == PowerupType.BigBall)
                     ChangeRadiusOverTime(Powerup.bigRadius);
@@ -205,7 +204,6 @@ namespace Pool
             if (gamePad.Buttons.Start.Equals(ButtonState.Pressed) &&
                 !oldGamePad.Buttons.Start.Equals(ButtonState.Pressed) && board.state == GameState.Play)
             {
-                Console.WriteLine("Pause menu");
                 board.state = GameState.Pause;
             }
 
@@ -226,31 +224,25 @@ namespace Pool
                 cancelingShot = true;
             }
 
-            if (board.state == GameState.Pause)//pause menu controlls
+            if (board.state == GameState.Pause)//pause menu controls
             {
                 if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))//resume
+                    !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))//resume
                 {
                     board.state = GameState.Play;
-                    Console.WriteLine("resumed game");
                 }
+
                 if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//restart
+                    !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//restart
                 {
                     board.RestartGame();
-                    Console.WriteLine("restarted");
                 }
+
                 if (gamePad.Buttons.X.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.X.Equals(ButtonState.Pressed))//main menu
+                    !oldGamePad.Buttons.X.Equals(ButtonState.Pressed))//main menu
                 {
+                    board.RestartGame();
                     board.state = GameState.MainMenu;
-                    Console.WriteLine("switched to main menu");
-                }
-                if (gamePad.Buttons.Y.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.Y.Equals(ButtonState.Pressed))//none
-                {
-                   // board.state = GameState.Play;
-                    Console.WriteLine("switched");
                 }
             }
             if (board.state == GameState.MainMenu && playerIndex==PlayerIndex.One)
@@ -259,7 +251,6 @@ namespace Pool
                 !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//play game
                 {
                     board.state = GameState.Play;
-                    Console.WriteLine("playing");
                 }
             }
             oldGamePad = gamePad;
@@ -272,8 +263,6 @@ namespace Pool
 
             wasZero = isZero;
             isZero = thumbstick.LengthSquared() <= 0;
-
-            Console.WriteLine(cancelingShot);
 
             if (cancelingShot)
             {
