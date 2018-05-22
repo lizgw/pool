@@ -329,6 +329,8 @@ namespace Pool
             // reset board vars
             state = GameState.Play;
             winningPlayer = -1;
+            powerupTimer = 0;
+            Powerup.count = 0;
 
             // empty the lists
             balls.Clear();
