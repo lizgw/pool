@@ -210,7 +210,7 @@ namespace Pool
             spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.Green);
 
             //title---game name
-            spriteBatch.DrawString(font,"Game name", new Vector2(Game1.screenWidth/2-75,50), Color.Yellow,0f,new Vector2(0,0),1,SpriteEffects.None,0.0f);
+            spriteBatch.DrawString(font,"Zilliards", new Vector2(Game1.screenWidth/2-75,50), Color.Yellow,0f,new Vector2(0,0),1,SpriteEffects.None,0.0f);
 
             
 
