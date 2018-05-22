@@ -188,7 +188,7 @@ namespace Pool
                 "Press B to cancel your shot.\n" +
                 "Press Start to pause the game.\n\n" +
                 "The goal is to get the most\nballs on your side of the screen!\n"+
-                "Press B to return to the Main Menu";
+                "\nPress B to return to the Main Menu";
             spriteBatch.DrawString(font, details, new Vector2(50, 150), Color.White);
         }
         private void DrawGameOverGUI(SpriteBatch spriteBatch)

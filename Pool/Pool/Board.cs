@@ -211,6 +211,11 @@ namespace Pool
                 foreach (Player p in players)
                     p.Update(gameTime);
             }
+            else if(state==GameState.instructions)
+            {
+                foreach (Player p in players)
+                    p.Update(gameTime);
+            }
             vibration_timer = (vibration_timer + 1) % 61;
             if (vibration_timer == 60)
             {
