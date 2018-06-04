@@ -45,8 +45,11 @@ namespace Pool
         // old power bar width
         public int pbWidth;
         // main menu selector bar
-        public static int selectorpos;
-        private Rectangle selector;
+        public static int selectorpos_menu;
+        private Rectangle selector_menu;
+        //pause menu selector
+        public static int selectorpos_pause;
+        private Rectangle selector_pause;
         public GUI(IServiceProvider serviceProvider, Board aBoard)
         {
             content = new ContentManager(serviceProvider, "Content");
@@ -101,15 +104,18 @@ namespace Pool
                 powerupBoxes.Add(new Rectangle(xPos, 0, boxWidth, boxHeight));
             }
 
-            selectorpos = 0;
-            Set_Selector();//sets selector to first option in the menu
+            selectorpos_menu = 0;
+            Set_selector_menu();//sets selector_menu to first option in the menu
+            selectorpos_pause = 0;
+            Set_selector_pause();//sets selector_menu to first option in the pause menu
         }
 
         public void Update(GameTime gameTime)
         {
             // update state
             state = board.state;
-            Set_Selector();
+            Set_selector_menu();
+            Set_selector_pause();
             // update score text for each player
             for (int i = 0; i < board.players.Length; i++)
                 scoreTexts[i] = "" + board.players[i].GetPoints();
@@ -176,10 +182,9 @@ namespace Pool
             //background
             spriteBatch.Draw(background_texture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight),Color.Gray * 0.50f);
             spriteBatch.DrawString(font,"paused", new Vector2((Game1.screenWidth / 2) - 125, 50), Color.White,0.0f,new Vector2(0,0),2f,SpriteEffects.None,0.01f);
-            //spriteBatch.DrawString(font, "Paused", new Vector2((Game1.screenWidth / 2) - 55,  50), Color.White);
-            //options
-            //resume
-            //spriteBatch.Draw(barTexture, new Rectangle((Game1.screenWidth/2)-32, (Game1.screenHeight/2)-10, 75, 20),  Color.White);
+
+            spriteBatch.Draw(barTexture, selector_pause, Color.Gray * 0.75f);
+
             spriteBatch.DrawString(font, "A: Resume", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) - 50), Color.YellowGreen);
             spriteBatch.DrawString(font, "B: Restart", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) ), Color.Red);
             spriteBatch.DrawString(font, "X: Quit to Main Menu", new Vector2((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) +50), Color.Blue);
@@ -220,32 +225,58 @@ namespace Pool
             spriteBatch.DrawString(font,"Zilliards", new Vector2(Game1.screenWidth/2-75,50), Color.Yellow,0f,new Vector2(0,0),1,SpriteEffects.None,0.0f);
 
 
-            spriteBatch.Draw(barTexture, selector, Color.Gray*0.75f);
+            spriteBatch.Draw(barTexture, selector_menu, Color.Gray*0.75f);
             //main menu options
             spriteBatch.DrawString(font, "B - Play New Game", new Vector2((Game1.screenWidth/2)-150,200), Color.Red);
             spriteBatch.DrawString(font, "X - Instructions", new Vector2((Game1.screenWidth / 2) - 150, 250), Color.Blue);
         }
 
-        public void Set_Selector()
+        public void Set_selector_menu()
         {
-            switch(selectorpos)
+            switch(selectorpos_menu )
             {
                 case 0:
-                    selector = new Rectangle((Game1.screenWidth / 2) - 150, 200,325,50);
+                    selector_menu = new Rectangle((Game1.screenWidth / 2) - 150, 200,325,50);
                     break;
                 case 1:
-                    selector = new Rectangle((Game1.screenWidth / 2) - 150, 250, 305, 50);
+                    selector_menu = new Rectangle((Game1.screenWidth / 2) - 150, 250, 305, 50);
                     break;
                 case -1:
-                    selectorpos = 1;
-                    Set_Selector();
+                    selectorpos_menu  = 1;
+                    Set_selector_menu();
                     break;
                 default:
-                    selectorpos = 0;
-                    Set_Selector();
+                    selectorpos_menu = 0;
+                    Set_selector_menu();
                     break;
 
                     
+            }
+        }
+        
+        public void Set_selector_pause()
+        {
+            switch (selectorpos_pause)
+            {
+                case 0:
+                    selector_pause = new Rectangle((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) - 50, 325, 50);
+                    break;
+                case 1:
+                    selector_pause = new Rectangle((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2), 305, 50);
+                    break;
+                case 2:
+                    selector_pause = new Rectangle((Game1.screenWidth / 2) - 75, (Game1.screenHeight / 2) + 50, 305, 50);
+                    break;
+                case -1:
+                    selectorpos_pause = 2;
+                    Set_selector_pause();
+                    break;
+                default:
+                    selectorpos_pause = 0;
+                    Set_selector_pause();
+                    break;
+
+
             }
         }
     }

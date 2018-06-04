@@ -238,22 +238,22 @@ namespace Pool
                 if (gamePad.DPad.Down.Equals(ButtonState.Pressed) &&
                !oldGamePad.DPad.Down.Equals(ButtonState.Pressed))//play game
                 {
-                    GUI.selectorpos++;
+                    GUI.selectorpos_menu++;
                 }
                 if (gamePad.DPad.Up.Equals(ButtonState.Pressed) &&
                !oldGamePad.DPad.Up.Equals(ButtonState.Pressed))//play game
                 {
-                    GUI.selectorpos--;
+                    GUI.selectorpos_menu--;
                     
                 }
                 if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
                 !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))//play game
                 {
-                    if (GUI.selectorpos==0)
+                    if (GUI.selectorpos_menu == 0)
                     {
                         board.state = GameState.Play;
                     }
-                    if (GUI.selectorpos == 1)
+                    if (GUI.selectorpos_menu  == 1)
                         board.state = GameState.instructions;
                 }
             }
@@ -266,6 +266,7 @@ namespace Pool
                 }
                 
             }
+            
             oldGamePad = gamePad;
         }
 
@@ -276,21 +277,34 @@ namespace Pool
             if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
                     !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))//resume
             {
-                board.state = GameState.Play;
+               switch(GUI.selectorpos_pause)
+                {
+                    case 0:
+                        board.state = GameState.Play;
+                        break;
+                    case 1:
+                        board.RestartGame();
+                        break;
+                    case 2:
+                        board.RestartGame();
+                        board.state = GameState.MainMenu;
+                        break;
+                }
             }
 
-            if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//restart
+            
+            if (gamePad.DPad.Down.Equals(ButtonState.Pressed) &&
+                     !oldGamePad.DPad.Down.Equals(ButtonState.Pressed))//resume
             {
-                board.RestartGame();
+                GUI.selectorpos_pause++;
+                Console.WriteLine("pressed down");
             }
-
-            if (gamePad.Buttons.X.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.X.Equals(ButtonState.Pressed))//main menu
+            if (gamePad.DPad.Up.Equals(ButtonState.Pressed) &&
+                     !oldGamePad.DPad.Up.Equals(ButtonState.Pressed))//resume
             {
-                board.RestartGame();
-                board.state = GameState.MainMenu;
+                GUI.selectorpos_pause--;
             }
+            oldGamePad = gamePad;
         }
 
         private void HandleMovement(Vector2 aThumbstick)
