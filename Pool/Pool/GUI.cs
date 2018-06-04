@@ -17,6 +17,7 @@ namespace Pool
 
         Texture2D barTexture;
         Texture2D ballTexture;
+        Texture2D background_texture;
         SpriteFont font;
 
         Board board;
@@ -43,12 +44,15 @@ namespace Pool
         int powerupBarHeight;
         // old power bar width
         public int pbWidth;
-
+        // main menu selector bar
+        public static int selectorpos;
+        private Rectangle selector;
         public GUI(IServiceProvider serviceProvider, Board aBoard)
         {
             content = new ContentManager(serviceProvider, "Content");
             barTexture = content.Load<Texture2D>("bar");
             ballTexture = content.Load<Texture2D>("ball");
+            background_texture = content.Load<Texture2D>("background");
             font = content.Load<SpriteFont>("SpriteFont1");
 
             board = aBoard;
@@ -96,13 +100,16 @@ namespace Pool
 
                 powerupBoxes.Add(new Rectangle(xPos, 0, boxWidth, boxHeight));
             }
+
+            selectorpos = 0;
+            Set_Selector();//sets selector to first option in the menu
         }
 
         public void Update(GameTime gameTime)
         {
             // update state
             state = board.state;
-
+            Set_Selector();
             // update score text for each player
             for (int i = 0; i < board.players.Length; i++)
                 scoreTexts[i] = "" + board.players[i].GetPoints();
@@ -167,7 +174,7 @@ namespace Pool
         {
             DrawPlayGUI(spriteBatch);
             //background
-            spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight),Color.Gray * 0.50f);
+            spriteBatch.Draw(background_texture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight),Color.Gray * 0.50f);
             spriteBatch.DrawString(font,"paused", new Vector2((Game1.screenWidth / 2) - 125, 50), Color.White,0.0f,new Vector2(0,0),2f,SpriteEffects.None,0.01f);
             //spriteBatch.DrawString(font, "Paused", new Vector2((Game1.screenWidth / 2) - 55,  50), Color.White);
             //options
@@ -181,7 +188,7 @@ namespace Pool
         private void DrawInstructionsGUI(SpriteBatch spriteBatch)
         {
              //background
-            spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.Green);
+            spriteBatch.Draw(background_texture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.Green);
             // game details
             string details = "Use the left stick to aim and fire.\n" +
                 "Press A to use your powerup.\n" +
@@ -194,7 +201,7 @@ namespace Pool
         private void DrawGameOverGUI(SpriteBatch spriteBatch)
         {
             // semi-transparent background
-            spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), playerColors[board.winningPlayer] * 0.50f);
+            spriteBatch.Draw(background_texture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), playerColors[board.winningPlayer] * 0.50f);
 
             // winning text
             string winText = "Game Over!\nCongratulations player " + (board.winningPlayer + 1) + "!";
@@ -207,16 +214,39 @@ namespace Pool
         private void DrawMainMenu(SpriteBatch spriteBatch)
         {
             //background
-            spriteBatch.Draw(barTexture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.Green);
+            spriteBatch.Draw(background_texture, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.Green);
 
             //title---game name
             spriteBatch.DrawString(font,"Zilliards", new Vector2(Game1.screenWidth/2-75,50), Color.Yellow,0f,new Vector2(0,0),1,SpriteEffects.None,0.0f);
 
-            
 
+            spriteBatch.Draw(barTexture, selector, Color.Gray*0.75f);
             //main menu options
             spriteBatch.DrawString(font, "B - Play New Game", new Vector2((Game1.screenWidth/2)-150,200), Color.Red);
             spriteBatch.DrawString(font, "X - Instructions", new Vector2((Game1.screenWidth / 2) - 150, 250), Color.Blue);
+        }
+
+        public void Set_Selector()
+        {
+            switch(selectorpos)
+            {
+                case 0:
+                    selector = new Rectangle((Game1.screenWidth / 2) - 150, 200,325,50);
+                    break;
+                case 1:
+                    selector = new Rectangle((Game1.screenWidth / 2) - 150, 250, 305, 50);
+                    break;
+                case -1:
+                    selectorpos = 1;
+                    Set_Selector();
+                    break;
+                default:
+                    selectorpos = 0;
+                    Set_Selector();
+                    break;
+
+                    
+            }
         }
     }
 }

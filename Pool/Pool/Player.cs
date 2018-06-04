@@ -234,15 +234,27 @@ namespace Pool
             }
             if (board.state == GameState.MainMenu && playerIndex==PlayerIndex.One)
             {
-                if (gamePad.Buttons.B.Equals(ButtonState.Pressed) &&
-                !oldGamePad.Buttons.B.Equals(ButtonState.Pressed))//play game
+                
+                if (gamePad.DPad.Down.Equals(ButtonState.Pressed) &&
+               !oldGamePad.DPad.Down.Equals(ButtonState.Pressed))//play game
                 {
-                    board.state = GameState.Play;
+                    GUI.selectorpos++;
                 }
-                if (gamePad.Buttons.X.Equals(ButtonState.Pressed) &&
-               !oldGamePad.Buttons.X.Equals(ButtonState.Pressed))//play game
+                if (gamePad.DPad.Up.Equals(ButtonState.Pressed) &&
+               !oldGamePad.DPad.Up.Equals(ButtonState.Pressed))//play game
                 {
-                    board.state = GameState.instructions;
+                    GUI.selectorpos--;
+                    
+                }
+                if (gamePad.Buttons.A.Equals(ButtonState.Pressed) &&
+                !oldGamePad.Buttons.A.Equals(ButtonState.Pressed))//play game
+                {
+                    if (GUI.selectorpos==0)
+                    {
+                        board.state = GameState.Play;
+                    }
+                    if (GUI.selectorpos == 1)
+                        board.state = GameState.instructions;
                 }
             }
             if (board.state == GameState.instructions && playerIndex == PlayerIndex.One)
